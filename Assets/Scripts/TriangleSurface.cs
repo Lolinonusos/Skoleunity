@@ -24,20 +24,20 @@ public class TriangleSurface : MonoBehaviour {
         string[] lines = File.ReadAllLines(vertexData);
         
         // Place vertices
-        for (int i = 0; i < UPPER; i++) {
+        //for (int i = 0; i < UPPER; i++) {
             
-        }
+        //}
 
         mesh.vertices = newVertices;
 
         longString = string.Empty;
-        longString = indicesAndNeighbourData.text;
+        longString = indicesAndNeighbourData;
 
-        
+
         // Place indices and neighbours
-        for (int i = 0; i < UPPER; i++) {
-            
-        }
+        //for (int i = 0; i < UPPER; i++) {
+
+        //}
     }
 
     void readFile() {
