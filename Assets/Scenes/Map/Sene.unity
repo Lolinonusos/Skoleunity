@@ -457,13 +457,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1530059858}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 2.7, z: 52.6}
+  m_LocalRotation: {x: 0, y: 0.93510437, z: -0.35437262, w: 0}
+  m_LocalPosition: {x: 0, y: 38.12, z: 52.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 41.51, y: 180, z: 0}
 --- !u!114 &1530059862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -653,7 +653,7 @@ Transform:
   m_GameObject: {fileID: 1676988470}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -22.9, y: -45.7, z: 13.1}
+  m_LocalPosition: {x: -22.9, y: -45.7, z: 63.16}
   m_LocalScale: {x: 10, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -759,7 +759,7 @@ Transform:
   m_GameObject: {fileID: 1770275398}
   serializedVersion: 2
   m_LocalRotation: {x: 0.09045874, y: 0, z: 0, w: 0.9959002}
-  m_LocalPosition: {x: -1.644697, y: -43.29322, z: -8.345237}
+  m_LocalPosition: {x: -1.644697, y: -43.29322, z: 244.85}
   m_LocalScale: {x: 31.12, y: 31.12, z: 31.12}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -776,17 +776,17 @@ PrefabInstance:
     - target: {fileID: 1783444853576613070, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -18.96
+      value: -35.1
       objectReference: {fileID: 0}
     - target: {fileID: 1783444853576613070, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 15
+      value: 13.9
       objectReference: {fileID: 0}
     - target: {fileID: 1783444853576613070, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.47
+      value: -16.4
       objectReference: {fileID: 0}
     - target: {fileID: 1783444853576613070, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
