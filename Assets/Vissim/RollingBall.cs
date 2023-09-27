@@ -13,10 +13,10 @@ public class RollingBall : MonoBehaviour {
 
     Vector3 gravity = Physics.gravity;
 
-    Vector3 currentVelocity;
-    Vector3 newVelocity;
+    Vector3 currentVelocity = new();
+    Vector3 newVelocity = Vector3.zero;
     //Vector3 currentAcceleration;
-    Vector3 acceleration;
+    Vector3 acceleration = Vector3.zero;
     float mass = 2.0f;
     float KG; 
     float newton;
@@ -47,18 +47,17 @@ public class RollingBall : MonoBehaviour {
         {
             collision = true;
             
-            Vector3 nVector = triangleSurface.normalVector;
-            Vector3 surfaceNormal = -Vector3.Dot(gravity, nVector) * nVector;
-            Vector3 force = gravity + surfaceNormal;
+            Vector3 surfaceNormal = triangleSurface.normalVector;
+            Vector3 normalForce = -Vector3.Dot(gravity, surfaceNormal) * surfaceNormal;
+            Vector3 force = gravity + normalForce;
             acceleration = force;
+            currentVelocity = Vector3.ProjectOnPlane(currentVelocity, surfaceNormal);
             
             if (triangleSurface.enteredTriangle)
             {
                 triangleSurface.enteredTriangle = false;
-
-                Vector3 reflectionNormal = (triangleSurface.normalVector + triangleSurface.normalVector).normalized;
-                //newVelocity -= 2 * Vector3.Dot(newVelocity, reflectionNormal) * reflectionNormal;
-                Vector3 newVelocity = Vector3.ProjectOnPlane(currentVelocity, reflectionNormal);
+                normalForce = (surfaceNormal + surfaceNormal).normalized;
+                currentVelocity = Vector3.ProjectOnPlane(currentVelocity, normalForce);
                 print("TIME: " + TIME);
                 print("NORMAL: " + triangleSurface.normalVector);
                 print("ACCELERATION: " + acceleration + "  " + acceleration.magnitude);
@@ -82,12 +81,12 @@ public class RollingBall : MonoBehaviour {
         Debug.DrawRay(transform.position, newVelocity, Color.blue);
 
         newPosition = transform.position + newVelocity * Time.fixedDeltaTime;
-        if (collision) {
-            transform.position = new Vector3(newPosition.x, barycY + radius, newPosition.z);
-        }
-        else {
-            transform.position = newPosition;
-        }
+        // if (collision) {
+        //     transform.position = new Vector3(newPosition.x, barycY + radius, newPosition.z);
+        // }
+        // else {
+        // }
+        transform.position = newPosition;
     }
 
     private bool CheckCollision()
