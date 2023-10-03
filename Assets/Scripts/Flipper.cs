@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class Flipper : MonoBehaviour {
     [SerializeField] AnimationCurve animationCurveUp;
-    float up = 1f;
     [SerializeField] AnimationCurve animationCurveDown;
-    float down = 1f;
     AnimationCurve animationCurve;
     float _timer = 1f;
 
@@ -40,7 +38,7 @@ public class Flipper : MonoBehaviour {
 	    // float angleRot = animationCurve.Evaluate(_timer) * 45f;
 	    // Vector3 localRotation = new Vector3(angleRot, 0, 0);
 		// transform.localEulerAngles = localRotation;
-        rb.MoveRotation(startRot * Quaternion.Euler(animationCurve.Evaluate(_timer) * 45f,0,0));
+        rb.MoveRotation(startRot * Quaternion.Euler(animationCurve.Evaluate(_timer) * -45f,0,0));
     }
 
     void Flip(AnimationCurve curve) {
