@@ -26,8 +26,7 @@ public class Flipper : MonoBehaviour {
         else if(Input.GetKeyDown(KeyCode.D) && !isLeftFlipper){
 	        Flip(animationCurveUp);
         }
-
-        if (Input.GetKeyUp(KeyCode.A) && isLeftFlipper) {
+        else if (Input.GetKeyUp(KeyCode.A) && isLeftFlipper) {
 	        Flip(animationCurveDown);
         }
         else if (Input.GetKeyUp(KeyCode.D) && !isLeftFlipper) {

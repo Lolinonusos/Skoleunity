@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1295566113852449523}
   m_Layer: 0
-  m_Name: TriangleBouncer
+  m_Name: CubeBumper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

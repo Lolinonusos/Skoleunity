@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7499757065438197282}
+  - component: {fileID: 3176907280010883008}
   - component: {fileID: 3898956944431432826}
   - component: {fileID: 4095418834031162085}
   - component: {fileID: 4731235645859489435}
   m_Layer: 0
-  m_Name: Bouncer
+  m_Name: Bumper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,13 +28,60 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1845519459802862619}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.42261827, w: 0.9063079}
   m_LocalPosition: {x: 5, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 50}
+--- !u!114 &3176907280010883008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1845519459802862619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc96651cc74d78a40b6442ddaee1df69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pointsAwarded: 10
+  scaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 24.513344
+      outSlope: 24.513344
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.09135215
+    - serializedVersion: 3
+      time: 0.049999997
+      value: 1.4999982
+      inSlope: 0.011279169
+      outSlope: 0.011279169
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.099999994
+      value: 1
+      inSlope: -18.110191
+      outSlope: -18.110191
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.112058975
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  UI: {fileID: 0}
 --- !u!33 &3898956944431432826
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -91,7 +139,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1845519459802862619}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d594c1107ee0cea46b3ef74d6fc7abf4, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

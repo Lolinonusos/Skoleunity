@@ -21,6 +21,6 @@ public class Spring : MonoBehaviour
         else if (Input.GetKeyUp(KeyCode.Space)) {
             chargeTime = 0.00f;
         }
-        print(chargeTime);
+        //print(chargeTime);
     }
 }
