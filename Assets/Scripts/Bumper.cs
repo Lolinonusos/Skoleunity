@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bouncer : MonoBehaviour {
+public class Bumper : MonoBehaviour {
     public int pointsAwarded = 10;
 
     [SerializeField] private AnimationCurve scaleCurve;

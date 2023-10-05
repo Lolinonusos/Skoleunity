@@ -37,7 +37,7 @@ public class Flipper : MonoBehaviour {
 	    // float angleRot = animationCurve.Evaluate(_timer) * 45f;
 	    // Vector3 localRotation = new Vector3(angleRot, 0, 0);
 		// transform.localEulerAngles = localRotation;
-        rb.MoveRotation(startRot * Quaternion.Euler(animationCurve.Evaluate(_timer) * -45f,0,0));
+        rb.MoveRotation(startRot * Quaternion.Euler(animationCurve.Evaluate(_timer) * -55f,0,0));
     }
 
     void Flip(AnimationCurve curve) {

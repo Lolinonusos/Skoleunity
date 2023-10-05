@@ -19,7 +19,7 @@ public class UIScript : MonoBehaviour
         currentTime = 0.0f;
         timerText.text = "Time: " + currentTime.ToString("f2");
         scoreText.text = "Score: " + score.ToString("f0");
-
+        startTimer = true;
     }
 
     // Update is called once per frame
