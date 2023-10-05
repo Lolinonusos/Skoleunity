@@ -26,14 +26,12 @@ public class Bumper : MonoBehaviour {
         }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         mesh = GetComponent<MeshFilter>();
         scale = transform.localScale;
     }
-
-    // Update is called once per frame
+    
     void FixedUpdate()
     {
         mesh.transform.localScale = new Vector3(scale.x * scaleCurve.Evaluate(timer), scale.y, scale.z * scaleCurve.Evaluate(timer));

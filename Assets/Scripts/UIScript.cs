@@ -13,7 +13,6 @@ public class UIScript : MonoBehaviour
     private int score;
     [SerializeField] TMP_Text scoreText;
     
-    // Start is called before the first frame update
     void Start() {
         score = 0;
         currentTime = 0.0f;
@@ -21,9 +20,8 @@ public class UIScript : MonoBehaviour
         scoreText.text = "Score: " + score.ToString("f0");
         startTimer = true;
     }
-
-    // Update is called once per frame
-    void Update() {
+    
+    void FixedUpdate() {
         if (startTimer) {
             currentTime += Time.deltaTime;
             timerText.text = "Time: " + currentTime.ToString("f2");
