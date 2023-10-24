@@ -128,18 +128,20 @@ public class TriangleSurface : MonoBehaviour {
         return new Vector3(u, v, w);
     }
     
-    private void CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3)
-    {
-        
+    private void CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3) {
+        p1 = new Vector3(2f, 0f, 0f);
+        p2 = new Vector3(0f, 1f, 0f);
+        p3 = new Vector3(0f, 0f, 0.5f);
         print("V1: " + p1 + "  V2: " + p2 + "  V3: " + p3);
         
         // Calculates two vector along the triangle's edge
         Vector3 v1 = p2 - p1;
         Vector3 v2 = p3 - p1;
     
+        print("A: " + v1 + "  B: " + v2);
         
         // Calculates the cross product of the two vectors to get the normal vector
         normalVector = Vector3.Cross(v1, v2).normalized;
-        //print("Triangle normal" + normalVector + " Magnitude: " + normalVector.magnitude);
+        print("Triangle normal" + normalVector + " Magnitude: " + normalVector.magnitude);
     }
 }
