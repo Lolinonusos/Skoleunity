@@ -7,12 +7,12 @@ using UnityEngine;
 public class TriangleSurface : MonoBehaviour {
 
     public Vector3[] newVertices;
-    int[] newTriangles = {
-        0, 3, 1,
-        1, 3, 4,
-        1, 4, 5,
-        1, 5, 2
-    };
+    int[] newTriangles;
+    //     0, 3, 1,
+    //     1, 3, 4,
+    //     1, 4, 5,
+    //     1, 5, 2
+    // };
 
     string longString; 
     List<string> eachLine;
@@ -34,6 +34,15 @@ public class TriangleSurface : MonoBehaviour {
         
         StreamReader sr = new StreamReader(vertexData);
 
+        float xMin = float.MaxValue;
+        float xMax = float.MinValue;
+
+        float yMin = float.MaxValue;
+        float yMax = float.MinValue;
+      
+        float zMin = float.MaxValue;
+        float zMax = float.MinValue;
+        
         int lineCount = int.Parse(sr.ReadLine());
         newVertices = new Vector3[lineCount]; // Give correct array size
 
@@ -45,13 +54,29 @@ public class TriangleSurface : MonoBehaviour {
             string[] splitLines = tempLine.Split(" ");
 
             float x = float.Parse(splitLines[0]);
-            float y = float.Parse(splitLines[1]);
-            float z = float.Parse(splitLines[2]);
+            float y = float.Parse(splitLines[2]);
+            float z = float.Parse(splitLines[1]);
 
             Vector3 vertPos = new Vector3(x, y, z);
             newVertices[counter] = vertPos; // Insert at end
+            newTriangles[counter] = counter;
+            
+            if (xMax < x) { xMax = x; }
+            if (xMin > x) { xMin = x; }
+
+            if (yMax < y) { yMax = y; }
+            if (yMin > y) { yMin = y; }
+            
+            if (zMin > z) { zMin = z; }
+            if (zMax > z) { zMax = z; }
             
             counter++;
+        }
+        
+        for (int i = 0; i < newVertices.Length; i++) {
+            newVertices[i].x -= 0.5f * (xMin + xMax);
+            newVertices[i].y -= 0.5f * (yMin + yMax);
+            newVertices[i].z -= 0.5f * (zMin + zMax);
         }
 
         //for (int i = 0; i < newVertices.Length; i++) {
