@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class PunktskyRender : MonoBehaviour
-{
+public class PunktskyRender : MonoBehaviour {
+    
+    
     [SerializeField]string vertexData;
 
     Vector3[] vertices;
@@ -13,6 +14,7 @@ public class PunktskyRender : MonoBehaviour
 
     // Start is called before the first frame update
     void Start() {
+        
         float xMin = float.MaxValue;
         float xMax = float.MinValue;
         
@@ -58,6 +60,11 @@ public class PunktskyRender : MonoBehaviour
             vertices[i].x -= 0.5f * (xMin + xMax);
             vertices[i].y -= 0.5f * (yMin + yMax);
             vertices[i].z -= 0.5f * (zMin + zMax);
+        }
+
+        for (int i = 0; i < vertices.Length; i++) {
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.position = vertices[i];
         }
         
         positionsBuffer = new ComputeBuffer(vertices.Length, 3*4);
