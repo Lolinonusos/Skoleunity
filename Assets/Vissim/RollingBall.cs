@@ -7,7 +7,7 @@ public class RollingBall : MonoBehaviour {
 
     [SerializeField] TriangleSurface triangleSurface;
 
-    [SerializeField][Range(0.0f, 10.0f)] private float bouncyness = 1.0f;
+    //[SerializeField][Range(0.0f, 10.0f)] private float bouncyness = 1.0f;
     
     float radius = 3f;
 
@@ -41,12 +41,8 @@ public class RollingBall : MonoBehaviour {
     void FixedUpdate() {
         TIME += Time.deltaTime;
 
-        bool collision = false;
-
         if (CheckCollision())
         {
-            collision = true;
-            
             Vector3 surfaceNormal = triangleSurface.normalVector;
             Vector3 normalForce = -Vector3.Dot(gravity, surfaceNormal) * surfaceNormal;
             Vector3 force = gravity + normalForce;
@@ -68,8 +64,6 @@ public class RollingBall : MonoBehaviour {
             }
         }
         else {
-            collision = false;
-
             // Constantly applies gravity
             acceleration = gravity * mass;
         }
