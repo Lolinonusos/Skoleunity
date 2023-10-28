@@ -22,8 +22,11 @@ public class PunktskyRender : MonoBehaviour
 
     
     
-    private Matrix4x4[] vertMatrices;
-    
+
+    private int listCount = 0;
+    private List<Matrix4x4> vertMatrices = new List<Matrix4x4>();
+    private List<List<Matrix4x4>> matrices = new List<List<Matrix4x4>>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -72,29 +75,34 @@ public class PunktskyRender : MonoBehaviour
 
         print("Points: " + vertices.Length);
         
-        print("xMin: " + xMin);
-        print("xMax: " + xMax);
-        print("yMin: " + yMin);
-        print("yMax: " + yMax);
-        print("zMin: " + zMin);
-        print("zMax: " + zMax);
+        //print("xMin: " + xMin);
+        //print("xMax: " + xMax);
+        //print("yMin: " + yMin);
+        //print("yMax: " + yMax);
+        //print("zMin: " + zMin);
+        //print("zMax: " + zMax);
 
+        // Sentrer punkter til origo
         for (int i = 0; i < vertices.Length; i++) {
             vertices[i].x -= 0.5f * (xMin + xMax);
             vertices[i].y -= 0.5f * (yMin + yMax);
             vertices[i].z -= 0.5f * (zMin + zMax);
-            //print("X :" + vertices[i].x);
-            //print("Y :" + vertices[i].y);
-            //print("Z :" + vertices[i].z);
-        
         }
+        
+        //vertMatrices = new Matrix4x4[vertices.Length];
+        for (int i = 0; i < vertices.Length; i++) {
+        
+            Matrix4x4 matrixToAdd = Matrix4x4.Translate(vertices[i]);
+            
+            vertMatrices.Add(matrixToAdd);
 
-        // for (int i = 0; i < vertices.Length; i++) {
-        //     GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        //     cube.transform.position = vertices[i];
-        // }
-
-        vertMatrices = new Matrix4x4[vertices.Length];
+            if (vertMatrices.Count > 100000) {
+                 listCount++;
+                 matrices.Add(vertMatrices);
+                 vertMatrices.Clear();
+             }
+        }
+        
         
         rp = new RenderParams(material);
         
@@ -105,13 +113,9 @@ public class PunktskyRender : MonoBehaviour
     // Update is called once per frame
     void Update() {
 
-        for (int i = 0; i < vertices.Length; i++)
+        for (int i = 0; i < listCount; i++)
         {
-            //var (pos, rot) = vertices[i].;
-
-            vertMatrices[i] = Matrix4x4.Translate(vertices[i]);
+            Graphics.RenderMeshInstanced(rp, mesh, 0, matrices[i]);
         }
-        
-        Graphics.RenderMeshInstanced(rp, mesh, 0, vertMatrices);
     }
 }
