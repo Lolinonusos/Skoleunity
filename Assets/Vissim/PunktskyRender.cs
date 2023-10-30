@@ -46,6 +46,7 @@ public class PunktskyRender : MonoBehaviour
         int lineCount = int.Parse(sr.ReadLine());
         vertices = new Vector3[lineCount]; // Give correct array size
 
+        // Leser gjennom fila
         int counter = 0;
         while (!sr.EndOfStream) {
 
