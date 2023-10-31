@@ -22,11 +22,17 @@ public class PunktskyRender : MonoBehaviour
 
     
     
-
+    // GPU instancing
     private int listCount = 0;
     private List<Matrix4x4> vertMatrices = new List<Matrix4x4>();
     private List<List<Matrix4x4>> matrices = new List<List<Matrix4x4>>();
 
+    // Indirect GPU instancing
+    uint[] args = { 0, 0, 0, 0, 0 };
+    ComputeBuffer argsBuffer;
+
+    ComputeBuffer positionBuffer1, positionBuffer2;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -76,12 +82,12 @@ public class PunktskyRender : MonoBehaviour
 
         print("Points: " + vertices.Length);
         
-        //print("xMin: " + xMin);
-        //print("xMax: " + xMax);
-        //print("yMin: " + yMin);
-        //print("yMax: " + yMax);
-        //print("zMin: " + zMin);
-        //print("zMax: " + zMax);
+        print("xMin: " + xMin);
+        print("xMax: " + xMax);
+        print("yMin: " + yMin);
+        print("yMax: " + yMax);
+        print("zMin: " + zMin);
+        print("zMax: " + zMax);
 
         // Sentrer punkter til origo
         for (int i = 0; i < vertices.Length; i++) {
@@ -104,19 +110,29 @@ public class PunktskyRender : MonoBehaviour
              }
         }
         
-        
+        // GPU instancing
         rp = new RenderParams(material);
         
         //positionsBuffer = new ComputeBuffer(vertices.Length, 3*4);
         //positionsBuffer.SetData(vertices);
+        
+        // Indirect GPU instancing
+        argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
     }
 
     // Update is called once per frame
     void Update() {
 
+        Graphics.DrawMeshInstancedIndirect(mesh, 0, material, new Bounds(Vector3.zero, Vector3.one), argsBuffer);
+        
         for (int i = 0; i < listCount; i++)
         {
             Graphics.RenderMeshInstanced(rp, mesh, 0, matrices[i]);
         }
+    }
+
+
+    void UpdateBuffers() {
+        
     }
 }
