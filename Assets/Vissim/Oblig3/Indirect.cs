@@ -1,15 +1,11 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
+using System.IO;
 
-public class PunktskyRender : MonoBehaviour
+public class Indirect : MonoBehaviour
 {
-    // I denne fila har jeg brukt disse som referanser https://www.youtube.com/watch?v=6mNj3M1il_c og https://github.com/Matthew-J-Spencer/pushing-unity/tree/main/Assets/_Game/Levels
-    // Dette er en video og et git repository laget av Matthew "Tarodev" Spencer
-    
-    // Filadresse
+// Filadresse
     [SerializeField]string vertexData;
     
     [SerializeField]private Mesh mesh;
@@ -18,15 +14,6 @@ public class PunktskyRender : MonoBehaviour
     // Punkt koordinater
     Vector3[] vertices; 
     
-    
-    // GPU instancing
-    private RenderParams rp;
-    private int listCount = 0;
-    private List<Matrix4x4> vertMatrices = new List<Matrix4x4>();
-    private List<List<Matrix4x4>> matrices = new List<List<Matrix4x4>>();
-
-    
-    // Indirect GPU instancing
     ComputeBuffer positionBuffer;
     ComputeBuffer argsBuffer;
     uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
@@ -96,47 +83,18 @@ public class PunktskyRender : MonoBehaviour
 
         // Sentrer punkter til origo
         for (int i = 0; i < vertices.Length; i++) {
-            vertices[i].x -= xAvg;
-            vertices[i].y -= yAvg;
-            vertices[i].z -= zAvg;
+            vertices[i].x -= 0.5f * (xMin + xMax);
+            vertices[i].y -= 0.5f * (yMin + yMax);
+            vertices[i].z -= 0.5f * (zMin + zMax);
         }
         
-        
-        // GPU instancing
-        for (int i = 0; i < vertices.Length; i++) {
-        
-            Matrix4x4 matrixToAdd = Matrix4x4.Translate(vertices[i]);
-            
-            vertMatrices.Add(matrixToAdd);
-        
-            if (vertMatrices.Count > 100000) {
-                 listCount++;
-                 matrices.Add(vertMatrices);
-                 vertMatrices.Clear();
-             }
-        }
-        
-        rp = new RenderParams(material);
-        
-        //positionsBuffer = new ComputeBuffer(vertices.Length, 3*4);
-        //positionsBuffer.SetData(vertices);
-        
-        // Indirect GPU instancing
-        // argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-        // UpdateBuffers();
+        argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+        UpdateBuffers();
     }
 
     // Update is called once per frame
     void Update() {
-
-        for (int i = 0; i < listCount; i++) {
-            // GPU instancing
-            Graphics.RenderMeshInstanced(rp, mesh, 0, matrices[i]);
-        }
-
-        
-        // Indirect GPU instancing
-        //Graphics.DrawMeshInstancedIndirect(mesh, subMeshIndex, material, new Bounds(Vector3.zero, new Vector3(xAvg, yAvg, zAvg) * 3), argsBuffer);
+        Graphics.DrawMeshInstancedIndirect(mesh, subMeshIndex, material, new Bounds(Vector3.zero, new Vector3(xAvg, yAvg, zAvg) * 3), argsBuffer);
     }
 
     private void OnDisable()
