@@ -5,7 +5,7 @@ using System.IO;
 
 public class Indirect : MonoBehaviour
 {
-// Filadresse
+    // Filadresse
     [SerializeField]string vertexData;
     
     [SerializeField]private Mesh mesh;
@@ -14,10 +14,16 @@ public class Indirect : MonoBehaviour
     // Punkt koordinater
     Vector3[] vertices; 
     
-    ComputeBuffer positionBuffer;
     ComputeBuffer argsBuffer;
     uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
     private int subMeshIndex = 0;
+
+    ComputeBuffer positionBuffer;
+    GraphicsBuffer commandBuffer;
+    GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
+    const int commandCount = 1;
+    
+    Vector3 scale = new Vector3(1.0f, 1.0f, 1.0f);
     
     private float xAvg;
     private float yAvg;
@@ -66,20 +72,13 @@ public class Indirect : MonoBehaviour
             counter++;
         }
 
-        print("Points: " + vertices.Length);
-        
-        // print("xMin: " + xMin);
-        // print("xMax: " + xMax);
-        // print("yMin: " + yMin);
-        // print("yMax: " + yMax);
-        // print("zMin: " + zMin);
-        // print("zMax: " + zMax);
+        //print("Points: " + vertices.Length);
 
         xAvg = 0.5f * (xMin + xMax);
         yAvg = 0.5f * (yMin + yMax);
         zAvg = 0.5f * (zMin + zMax);
         
-        print("Avg values: " + new Vector3(xAvg, yAvg, zAvg));
+        //print("Avg values: " + new Vector3(xAvg, yAvg, zAvg));
 
         // Sentrer punkter til origo
         for (int i = 0; i < vertices.Length; i++) {
@@ -87,52 +86,61 @@ public class Indirect : MonoBehaviour
             vertices[i].y -= 0.5f * (yMin + yMax);
             vertices[i].z -= 0.5f * (zMin + zMax);
         }
-        
-        argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-        UpdateBuffers();
-    }
 
-    // Update is called once per frame
+        commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
+        commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
+        positionBuffer = new ComputeBuffer(vertices.Length, 4 * 3);
+        positionBuffer.SetData(vertices);
+        // argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+        //UpdateBuffers();
+    }
+    
     void Update() {
-        Graphics.DrawMeshInstancedIndirect(mesh, subMeshIndex, material, new Bounds(Vector3.zero, new Vector3(xAvg, yAvg, zAvg) * 3), argsBuffer);
-    }
 
-    private void OnDisable()
-    {
-        if (positionBuffer != null) {positionBuffer.Release();}
-        positionBuffer = null;
+        Matrix4x4 tempMatrix = Matrix4x4.identity; 
+        tempMatrix.SetTRS(new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity, scale);
         
-        if (argsBuffer != null) {argsBuffer.Release();}
-        argsBuffer = null;
+        RenderParams rp = new RenderParams(material);
+        rp.worldBounds = new Bounds(Vector3.zero, new Vector3(xAvg, yAvg, zAvg));
+        rp.matProps = new MaterialPropertyBlock();
+        rp.matProps.SetMatrix("objectToWorld", tempMatrix);
+        rp.matProps.SetBuffer("positions", positionBuffer);
+        commandData[0].indexCountPerInstance = mesh.GetIndexCount(0);
+        commandData[0].instanceCount = (uint)vertices.Length;
+        //commandData[1].indexCountPerInstance = mesh.GetIndexCount(0);
+        //commandData[1].instanceCount = (uint)vertices.Length;
+        commandBuffer.SetData(commandData);
+        Graphics.RenderMeshIndirect(rp, mesh, commandBuffer, commandCount);
     }
 
-    void UpdateBuffers()
-    {
+    private void OnDisable() {
+        commandBuffer?.Release();
+        commandBuffer = null;
+    }
+
+    void UpdateBuffers() {
         subMeshIndex = Mathf.Clamp(subMeshIndex, 0, mesh.subMeshCount - 1);
 
         if (positionBuffer != null) { positionBuffer.Release(); }
         
-        positionBuffer = new ComputeBuffer(vertices.Length, 16);
+        positionBuffer = new ComputeBuffer(vertices.Length, 4 * 3);
 
         Vector4[] positions = new Vector4[vertices.Length];
 
         for (int i = 0; i < vertices.Length; i++) {
             //print("Position: " + vertices[i]);
-            positions[i] = new Vector4(vertices[i].x, vertices[i].y, vertices[i].z, 5f);
+            positions[i] = new Vector4(vertices[i].x, vertices[i].y, vertices[i].z);
             print("Positions as Vector4: " + positions[i]);
             //print(i);
         }
-        
-        
-        positionBuffer.SetData(positions);
+
+        positionBuffer.SetData(vertices);
         material.SetBuffer("positionBuffer", positionBuffer);
-        //material.SetColorArray();
 
         args[0] = (uint)mesh.GetIndexCount(subMeshIndex);
         args[1] = (uint)vertices.Length;
         args[2] = (uint)mesh.GetIndexStart(subMeshIndex);
         args[3] = (uint)mesh.GetBaseVertex(subMeshIndex);
-        
         argsBuffer.SetData(args);
     }
 }

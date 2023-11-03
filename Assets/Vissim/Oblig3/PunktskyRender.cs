@@ -80,13 +80,6 @@ public class PunktskyRender : MonoBehaviour
         }
 
         print("Points: " + vertices.Length);
-        
-        // print("xMin: " + xMin);
-        // print("xMax: " + xMax);
-        // print("yMin: " + yMin);
-        // print("yMax: " + yMax);
-        // print("zMin: " + zMin);
-        // print("zMax: " + zMax);
 
         xAvg = 0.5f * (xMin + xMax);
         yAvg = 0.5f * (yMin + yMax);

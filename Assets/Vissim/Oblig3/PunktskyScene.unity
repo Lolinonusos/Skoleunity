@@ -209,8 +209,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 789221471}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.09418853, y: -0.29326624, z: 0.028950062, w: -0.9509392}
-  m_LocalPosition: {x: 133.7609, y: 31.536798, z: -5.4111156}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -818}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -260,6 +260,52 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!1 &824744474
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 824744476}
+  - component: {fileID: 824744475}
+  m_Layer: 0
+  m_Name: Example
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &824744475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824744474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5c9cccab741e9b4abe30a431e8bb03d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 2272303ee502f9c4cae48477a097c560, type: 2}
+  mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &824744476
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824744474}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &931419930
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,9 +453,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bee62bb5f3eafc649a27ed1aa501f7ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vertexData: Assets/Vissim/Vertices.txt
+  vertexData: Assets/Vissim/Oblig3/merged.txt
   mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  material: {fileID: 2100000, guid: b5b63778f94e44a4e8b0cd6d9f524779, type: 2}
+  material: {fileID: 2100000, guid: 1ec7e33373825284ebe2fb64e8f5b8cb, type: 2}
 --- !u!4 &1836267926
 Transform:
   m_ObjectHideFlags: 0
@@ -449,7 +495,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1939890894}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0329212c2b60bd4286e90e43b0c3f2e, type: 3}
   m_Name: 
@@ -480,3 +526,4 @@ SceneRoots:
   - {fileID: 931419932}
   - {fileID: 1939890896}
   - {fileID: 1836267926}
+  - {fileID: 824744476}
