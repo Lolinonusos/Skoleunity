@@ -87,6 +87,31 @@ public class Indirect : MonoBehaviour
             vertices[i].z -= 0.5f * (zMin + zMax);
         }
 
+        xMin = float.MaxValue;
+        xMax = float.MinValue;
+        yMin = float.MaxValue;
+        yMax = float.MinValue;
+        zMin = float.MaxValue;
+        zMax = float.MinValue;
+        for (int i = 0; i < vertices.Length; i++) {
+            
+            float x = vertices[i].x;
+            float y = vertices[i].y;
+            float z = vertices[i].z;
+            
+            if (xMax < x) { xMax = x; }
+            if (xMin > x) { xMin = x; }
+
+            if (yMax < y) { yMax = y; }
+            if (yMin > y) { yMin = y; }
+                
+            if (zMax < z) { zMax = z; }
+            if (zMin > z) { zMin = z; }
+        }
+        print("Max positions: " + new Vector3(xMax, yMax, zMax));
+        print("Min positions: " + new Vector3(xMin, yMin, zMin));
+
+        
         commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
         commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
         positionBuffer = new ComputeBuffer(vertices.Length, 4 * 3);
@@ -99,6 +124,7 @@ public class Indirect : MonoBehaviour
 
         Matrix4x4 tempMatrix = Matrix4x4.identity; 
         tempMatrix.SetTRS(new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity, scale);
+        //tempMatrix = Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.0f));
         
         RenderParams rp = new RenderParams(material);
         rp.worldBounds = new Bounds(Vector3.zero, new Vector3(xAvg, yAvg, zAvg));

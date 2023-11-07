@@ -128,6 +128,7 @@ public class TriangleSurface : MonoBehaviour {
         return baryc.x * v1 + baryc.y * v2 + baryc.z * v3;
     }
 
+    // a, b and, c are triangle points, x is object position
     public Vector3 getBarycentricCoordinate(Vector2 a, Vector2 b, Vector2 c, Vector2 x) {
 
         Vector2 v0 = (b - a);
