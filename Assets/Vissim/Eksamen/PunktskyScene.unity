@@ -291,9 +291,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b2bfa25253cb6458248016975426d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointFilePath: Assets/Vissim/Oblig3/merged.txt
+  pointFilePath: Assets/Vissim/Eksamen/merged.txt
   isYup: 0
-  resolution: 4
+  resolution: 20
 --- !u!4 &820020164
 Transform:
   m_ObjectHideFlags: 0
@@ -547,7 +547,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1836267924}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bee62bb5f3eafc649a27ed1aa501f7ec, type: 3}
   m_Name: 
@@ -555,6 +555,7 @@ MonoBehaviour:
   vertexData: Assets/Vissim/Oblig3/merged.txt
   mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   material: {fileID: 2100000, guid: 1ec7e33373825284ebe2fb64e8f5b8cb, type: 2}
+  isYup: 0
 --- !u!4 &1836267926
 Transform:
   m_ObjectHideFlags: 0

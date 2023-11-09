@@ -11,6 +11,8 @@ public class Indirect : MonoBehaviour
     [SerializeField]private Mesh mesh;
     [SerializeField]private Material material;
 
+    [SerializeField] private bool isYup = false;
+    
     // Punkt koordinater
     Vector3[] vertices; 
     
@@ -55,8 +57,18 @@ public class Indirect : MonoBehaviour
             string[] splitLines = tempLine.Split(" ");
 
             float x = float.Parse(splitLines[0]);
-            float y = float.Parse(splitLines[2]);
-            float z = float.Parse(splitLines[1]);
+            
+            float y = 0;
+            float z = 0;
+
+            if (!isYup) {
+                y = float.Parse(splitLines[2]);
+                z = float.Parse(splitLines[1]);
+            }
+            else {
+                y = float.Parse(splitLines[1]);
+                z = float.Parse(splitLines[2]);
+            }
 
             if (xMax < x) { xMax = x; }
             if (xMin > x) { xMin = x; }
