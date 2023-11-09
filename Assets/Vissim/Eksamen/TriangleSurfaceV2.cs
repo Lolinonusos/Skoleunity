@@ -24,7 +24,6 @@ public class TriangleSurfaceV2 : MonoBehaviour
     void Start()
     {
         mesh = new Mesh();
-        GetComponent<MeshFilter>().mesh = mesh;
         
         float xMin = float.MaxValue;
         float xMax = float.MinValue;
@@ -134,9 +133,8 @@ public class TriangleSurfaceV2 : MonoBehaviour
         float h = size / resolution;
         float hSize = size / 2.0f;
         
-        for (int z = 0; z < resolution +1; z++)
+        for (int z = 0; z < resolution +1; z++) {
             for (int x = 0; x < resolution +1; x++) {
-            {
 
                 Vector3 vertex = new Vector3(min + (x *h), 0, min + (z *h));
                 Vector2 uvTemp = new Vector2(x / (float) resolution, z / (float) resolution);
@@ -148,24 +146,11 @@ public class TriangleSurfaceV2 : MonoBehaviour
         }
         mesh.vertices = vertices.ToArray();
         mesh.uv = uv.ToArray();
-
-
-
+        
         // Indices
-        for (int x = 0; x < resolution; x++)
-        {
-            for (int z = 0; z < resolution; z++)
-            {
-
+        for (int x = 0; x < resolution; x++) {
+            for (int z = 0; z < resolution; z++) {
                 int i = (x * resolution) + x + z;
-                // // First triangle
-                // indices.Add((x + z * resolution));
-                // indices.Add(((x + 1) + z * resolution));
-                // indices.Add((x + (z + 1) * resolution));
-                // // Second triangle
-                // indices.Add(((x + 1) + z * resolution));
-                // indices.Add(((x + 1) + (z + 1) * resolution));
-                // indices.Add((x + (z + 1) * resolution));
                 // First triangle
                 indices.Add(i);
                 indices.Add(i + resolution + 1);
@@ -179,6 +164,8 @@ public class TriangleSurfaceV2 : MonoBehaviour
         mesh.triangles = indices.ToArray();
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
+        GetComponent<MeshFilter>().mesh = mesh;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     float CheckForPoints(Vector2 vertex, float size) {
@@ -190,9 +177,8 @@ public class TriangleSurfaceV2 : MonoBehaviour
         Vector2 topRight = new Vector2(vertex.x + size, vertex.y + size);
         Vector2 bottomLeft = new Vector2(vertex.x - size, vertex.y - size);
         Vector2 bottomRight = new Vector2(vertex.x + size, vertex.y - size);
-        
-        
-        for (int i = 0; i < points.Length; i++) {
+
+        for (int i = 0; i < points.Length; i += 50) {
             // Hvis punkt er inne i området, legg de til i en array
             // Check first triangle
             Vector3 temp;
@@ -208,10 +194,10 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 }
             }
         }
+        
         //print(heightValues.Count);
         if (heightValues.Count > 0) {
-            for (int i = 0; i < heightValues.Count; i++)
-            {
+            for (int i = 0; i < heightValues.Count; i++) {
                 averageHeight += heightValues[i];
             }
             averageHeight = averageHeight / heightValues.Count;

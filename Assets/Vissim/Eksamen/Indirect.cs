@@ -136,8 +136,6 @@ public class Indirect : MonoBehaviour
 
         Matrix4x4 tempMatrix = Matrix4x4.identity; 
         tempMatrix.SetTRS(new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity, scale);
-        //tempMatrix = Matrix4x4.Translate(new Vector3(0.0f, 0.0f, 0.0f));
-        
         RenderParams rp = new RenderParams(material);
         rp.worldBounds = new Bounds(Vector3.zero, new Vector3(xAvg, yAvg, zAvg));
         rp.matProps = new MaterialPropertyBlock();
@@ -145,8 +143,6 @@ public class Indirect : MonoBehaviour
         rp.matProps.SetBuffer("positions", positionBuffer);
         commandData[0].indexCountPerInstance = mesh.GetIndexCount(0);
         commandData[0].instanceCount = (uint)vertices.Length;
-        //commandData[1].indexCountPerInstance = mesh.GetIndexCount(0);
-        //commandData[1].instanceCount = (uint)vertices.Length;
         commandBuffer.SetData(commandData);
         Graphics.RenderMeshIndirect(rp, mesh, commandBuffer, commandCount);
     }
