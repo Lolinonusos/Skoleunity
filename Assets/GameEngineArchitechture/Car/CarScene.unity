@@ -497,10 +497,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1455214804246712461, guid: eea6a1d530fefd94ca33ae2c115c29b5,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e44b2407bb355784bba0074f5ee820cc, type: 2}
     - target: {fileID: 3790033758051078629, guid: eea6a1d530fefd94ca33ae2c115c29b5,
         type: 3}
       propertyPath: m_Name
       value: Car
+      objectReference: {fileID: 0}
+    - target: {fileID: 9104069793172606211, guid: eea6a1d530fefd94ca33ae2c115c29b5,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
