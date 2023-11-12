@@ -8,18 +8,21 @@ public class TriangleSurfaceV2 : MonoBehaviour
     [SerializeField] private string pointFilePath;
     private Vector3[] points;
 
-    [SerializeField] private bool isYup = false;
-    
-    // Quads to be placed in each direction
-    [SerializeField][Range(1, 10000)] private int resolution;
-
-    private Mesh mesh;
-    // private MeshFilter mFilter;
-    // private MeshRenderer mRenderer;
-    // public Material material;
     private float xAvg;
     private float yAvg;
     private float zAvg;
+    
+    [SerializeField] private bool isYup = false;
+    // Quads to be placed in each direction
+    [SerializeField][Range(1, 10000)] private int resolution;
+    private Mesh mesh;
+
+    private int previousTriangle = -1;
+    private int currentTriangle = 0;
+    public Vector3 previousNormalVector;
+    public Vector3 normalVector;
+    public bool enteredTriangle = false;
+
     
     void Start()
     {
@@ -205,8 +208,42 @@ public class TriangleSurfaceV2 : MonoBehaviour
         return averageHeight;
     }
     
-    Vector3 baryc(Vector2 objectPos) {
-        return Vector3.zero;
+    public Vector3 baryc(Vector2 objectPos) {
+        // Returns world coordinate based on the triangles barycentric coordinate
+        
+        Vector3 v1 = new Vector3();
+        Vector3 v2 = new Vector3();
+        Vector3 v3 = new Vector3();
+
+        Vector3 baryc = new Vector3(-1, -1 , -1);
+        
+        for (int i = 0; i < mesh.triangles.Length / 3; i++) {
+            int i1 = mesh.triangles[i * 3];
+            int i2 = mesh.triangles[i * 3 + 1];
+            int i3 = mesh.triangles[i * 3 + 2];
+
+            v1 = mesh.vertices[i1];
+            v2 = mesh.vertices[i2];
+            v3 = mesh.vertices[i3];
+
+            baryc = getBarycentricCoordinate(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z), new Vector2(v3.x, v3.z), objectPos);
+            if (baryc is { x: >= 0, y: >= 0, z: >= 0 }) {
+                currentTriangle = i;
+                break;
+            }
+        }
+
+        // Check if we are in a different triangle, update normal vector if true
+        if (previousTriangle != currentTriangle) {
+            print("Entered triangle number: " + currentTriangle);
+            previousTriangle = currentTriangle;
+            previousNormalVector = normalVector;
+            CalculateNormalVector(v1, v2, v3);
+            enteredTriangle = true;
+        }
+        
+        // Convert the barycentric coordinates to world coordinates
+        return baryc.x * v1 + baryc.y * v2 + baryc.z * v3;
     }
 
     Vector3 educatedBaryc() {
@@ -231,5 +268,22 @@ public class TriangleSurfaceV2 : MonoBehaviour
         float u = 1.0f - v - w;
 
         return new Vector3(u, v, w);
+    }
+    
+    private void CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3) {
+        p1 = new Vector3(2f, 0f, 0f);
+        p2 = new Vector3(0f, 1f, 0f);
+        p3 = new Vector3(0f, 0f, 0.5f);
+        print("V1: " + p1 + "  V2: " + p2 + "  V3: " + p3);
+        
+        // Calculates two vector along the triangle's edge
+        Vector3 v1 = p2 - p1;
+        Vector3 v2 = p3 - p1;
+    
+        print("A: " + v1 + "  B: " + v2);
+        
+        // Calculates the cross product of the two vectors to get the normal vector
+        normalVector = Vector3.Cross(v1, v2).normalized;
+        print("Triangle normal" + normalVector + " Magnitude: " + normalVector.magnitude);
     }
 }

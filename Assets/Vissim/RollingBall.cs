@@ -5,11 +5,11 @@ using UnityEngine.Assertions.Must;
 
 public class RollingBall : MonoBehaviour {
 
-    [SerializeField] TriangleSurface triangleSurface;
+    [SerializeField] TriangleSurfaceV2 triangleSurface;
 
     //[SerializeField][Range(0.0f, 10.0f)] private float bouncyness = 1.0f;
     
-    float radius = 3f;
+    [SerializeField]float radius = 3f;
 
     Vector3 gravity = Physics.gravity;
 
@@ -26,6 +26,9 @@ public class RollingBall : MonoBehaviour {
     
     Vector3 previousPosition;
     Vector3 newPosition;
+
+    [SerializeField][Range(2, 50)]private int splineRes = 10;
+    private List<Vector3> bSplinePoints = new List<Vector3>();
     
     // Start is called before the first frame update
     void Awake() {
@@ -48,6 +51,7 @@ public class RollingBall : MonoBehaviour {
             Vector3 force = gravity + normalForce;
             acceleration = force;
             currentVelocity = Vector3.ProjectOnPlane(currentVelocity, surfaceNormal);
+            SetSplineControlPoint();
             
             if (triangleSurface.enteredTriangle)
             {
@@ -96,13 +100,20 @@ public class RollingBall : MonoBehaviour {
         {
             barycY = baryc.y;
             Vector3 collisionPos = pos + dotProduct * normalVec;
-            //Debug.Log("CBT");
             return true;
         }
         return false;
     }
     
-    void SetVelocity() {
-        
+    void SetSplineControlPoint() {
+        bSplinePoints.Add(transform.position);
+    }
+
+    void DrawSpline()
+    {
+        for (float x = 0; x < bSplinePoints.Count; x += 0.005f) {
+            
+            
+        }
     }
 }
