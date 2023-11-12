@@ -82,17 +82,10 @@ public class TriangleSurface : MonoBehaviour {
         mesh.triangles = newTriangles;
 
         mesh.RecalculateNormals();
-
-
-        // Place indices and neighbours
-        //for (int i = 0; i < UPPER; i++) {
-
-        //}
     }
 
     public Vector3 baryc(Vector2 objectPosition) {
         // Returns world coordinate based on the triangles barycentric coordinate
-        
         Vector3 v1 = new Vector3();
         Vector3 v2 = new Vector3();
         Vector3 v3 = new Vector3();
@@ -123,14 +116,12 @@ public class TriangleSurface : MonoBehaviour {
             CalculateNormalVector(v1, v2, v3);
             enteredTriangle = true;
         }
-        
         // Convert the barycentric coordinates to world coordinates
         return baryc.x * v1 + baryc.y * v2 + baryc.z * v3;
     }
 
     // a, b and, c are triangle points, x is object position
     public Vector3 getBarycentricCoordinate(Vector2 a, Vector2 b, Vector2 c, Vector2 x) {
-
         Vector2 v0 = (b - a);
         Vector2 v1 = c - a;
         Vector2 v2 = x - a;

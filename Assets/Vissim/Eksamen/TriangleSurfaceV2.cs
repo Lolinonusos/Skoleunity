@@ -22,10 +22,8 @@ public class TriangleSurfaceV2 : MonoBehaviour
     public Vector3 previousNormalVector;
     public Vector3 normalVector;
     public bool enteredTriangle = false;
-
     
-    void Start()
-    {
+    void Start() {
         mesh = new Mesh();
         
         float xMin = float.MaxValue;
@@ -139,7 +137,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
         for (int z = 0; z < resolution +1; z++) {
             for (int x = 0; x < resolution +1; x++) {
 
-                Vector3 vertex = new Vector3(min + (x *h), 0, min + (z *h));
+                Vector3 vertex = new Vector3(min + (x * h), 0, min + (z * h));
                 Vector2 uvTemp = new Vector2(x / (float) resolution, z / (float) resolution);
                 vertex.y = CheckForPoints(new Vector2(vertex.x, vertex.z), h);
                 vertices.Add(vertex);
@@ -210,7 +208,6 @@ public class TriangleSurfaceV2 : MonoBehaviour
     
     public Vector3 baryc(Vector2 objectPos) {
         // Returns world coordinate based on the triangles barycentric coordinate
-        
         Vector3 v1 = new Vector3();
         Vector3 v2 = new Vector3();
         Vector3 v3 = new Vector3();
@@ -218,9 +215,9 @@ public class TriangleSurfaceV2 : MonoBehaviour
         Vector3 baryc = new Vector3(-1, -1 , -1);
         
         for (int i = 0; i < mesh.triangles.Length / 3; i++) {
-            int i1 = mesh.triangles[i * 3];
-            int i2 = mesh.triangles[i * 3 + 1];
-            int i3 = mesh.triangles[i * 3 + 2];
+            int i1 = mesh.triangles[i * 3 + 1];
+            int i2 = mesh.triangles[i * 3 + 2];
+            int i3 = mesh.triangles[i * 3 + 0];
 
             v1 = mesh.vertices[i1];
             v2 = mesh.vertices[i2];
