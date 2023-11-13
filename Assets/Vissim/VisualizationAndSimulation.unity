@@ -123,18 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &225224002 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3650091251687578595, guid: 32f3df99ca0ada248a48801ce302d53e,
-    type: 3}
-  m_PrefabInstance: {fileID: 7201312716235110263}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e31ff08325eb8cc46840af525be01627, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &385376640
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -203,6 +191,31 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e0d1283a46b8fe468005eb4b192e91e, type: 3}
+--- !u!1 &472486093 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2981859448678614397, guid: 32f3df99ca0ada248a48801ce302d53e,
+    type: 3}
+  m_PrefabInstance: {fileID: 7201312716235110263}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &472486097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472486093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e31ff08325eb8cc46840af525be01627, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  newVertices: []
+  vertexData: Assets/Vissim/Vertices.txt
+  indicesAndNeighbourData: 
+  previousNormalVector: {x: 0, y: 0, z: 0}
+  normalVector: {x: 0, y: 0, z: 0}
+  currentTriangle: 0
+  enteredTriangle: 0
 --- !u!1 &1403399898
 GameObject:
   m_ObjectHideFlags: 0
@@ -469,17 +482,17 @@ PrefabInstance:
     - target: {fileID: 1783444853576613070, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -40
+      value: -19.8
       objectReference: {fileID: 0}
     - target: {fileID: 1783444853576613070, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 13.9
+      value: 28
       objectReference: {fileID: 0}
     - target: {fileID: 1783444853576613070, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -20
+      value: -6.9
       objectReference: {fileID: 0}
     - target: {fileID: 1783444853576613070, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
@@ -518,6 +531,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3996429207013486057, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
+      propertyPath: radius
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3996429207013486057, guid: 0974f712f1e694e4ebe64c16a484c321,
+        type: 3}
       propertyPath: bouncyness
       value: 1
       objectReference: {fileID: 0}
@@ -525,12 +543,22 @@ PrefabInstance:
         type: 3}
       propertyPath: triangleSurface
       value: 
-      objectReference: {fileID: 225224002}
+      objectReference: {fileID: 0}
     - target: {fileID: 4198490455805153208, guid: 0974f712f1e694e4ebe64c16a484c321,
         type: 3}
       propertyPath: m_Name
       value: RollingBall
       objectReference: {fileID: 0}
+    - target: {fileID: 5774951895958427759, guid: 0974f712f1e694e4ebe64c16a484c321,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5774951895958427759, guid: 0974f712f1e694e4ebe64c16a484c321,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 50cd7d959c6593b438474d3441c1ac1a, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -607,7 +635,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2981859448678614397, guid: 32f3df99ca0ada248a48801ce302d53e,
+        type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 472486097}
   m_SourcePrefab: {fileID: 100100000, guid: 32f3df99ca0ada248a48801ce302d53e, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

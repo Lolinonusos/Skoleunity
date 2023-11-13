@@ -7,7 +7,12 @@ using UnityEngine;
 public class TriangleSurface : MonoBehaviour {
 
     public Vector3[] newVertices;
-    int[] newTriangles;
+    int[] newTriangles = {
+        0, 3, 1,
+        1, 3, 4,
+        1, 4, 5,
+        1, 5, 2
+    };
 
     string longString; 
     List<string> eachLine;
@@ -21,22 +26,13 @@ public class TriangleSurface : MonoBehaviour {
     private int previousTriangle = -1;
     public int currentTriangle = 0;
     // Start is called before the first frame update
-    public Mesh mesh;
+    Mesh mesh;
     public bool enteredTriangle = false;
     void Start() {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         
         StreamReader sr = new StreamReader(vertexData);
-
-        float xMin = float.MaxValue;
-        float xMax = float.MinValue;
-
-        float yMin = float.MaxValue;
-        float yMax = float.MinValue;
-      
-        float zMin = float.MaxValue;
-        float zMax = float.MinValue;
         
         int lineCount = int.Parse(sr.ReadLine());
         newVertices = new Vector3[lineCount]; // Give correct array size
@@ -49,35 +45,16 @@ public class TriangleSurface : MonoBehaviour {
             string[] splitLines = tempLine.Split(" ");
 
             float x = float.Parse(splitLines[0]);
-            float y = float.Parse(splitLines[2]);
-            float z = float.Parse(splitLines[1]);
+            float y = float.Parse(splitLines[1]);
+            float z = float.Parse(splitLines[2]);
 
             Vector3 vertPos = new Vector3(x, y, z);
             newVertices[counter] = vertPos; // Insert at end
-            newTriangles[counter] = counter;
-            
-            if (xMax < x) { xMax = x; }
-            if (xMin > x) { xMin = x; }
-
-            if (yMax < y) { yMax = y; }
-            if (yMin > y) { yMin = y; }
-            
-            if (zMin > z) { zMin = z; }
-            if (zMax > z) { zMax = z; }
+            //newTriangles[counter] = counter;
             
             counter++;
         }
-        
-        for (int i = 0; i < newVertices.Length; i++) {
-            newVertices[i].x -= 0.5f * (xMin + xMax);
-            newVertices[i].y -= 0.5f * (yMin + yMax);
-            newVertices[i].z -= 0.5f * (zMin + zMax);
-        }
 
-        //for (int i = 0; i < newVertices.Length; i++) {
-            //Debug.Log(newVertices[i]);
-        //}
-  
         mesh.vertices = newVertices;
         mesh.triangles = newTriangles;
 
@@ -122,7 +99,7 @@ public class TriangleSurface : MonoBehaviour {
 
     // a, b and, c are triangle points, x is object position
     public Vector3 getBarycentricCoordinate(Vector2 a, Vector2 b, Vector2 c, Vector2 x) {
-        Vector2 v0 = (b - a);
+        Vector2 v0 = b - a;
         Vector2 v1 = c - a;
         Vector2 v2 = x - a;
 
@@ -141,11 +118,6 @@ public class TriangleSurface : MonoBehaviour {
     }
     
     private void CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3) {
-        p1 = new Vector3(2f, 0f, 0f);
-        p2 = new Vector3(0f, 1f, 0f);
-        p3 = new Vector3(0f, 0f, 0.5f);
-        print("V1: " + p1 + "  V2: " + p2 + "  V3: " + p3);
-        
         // Calculates two vector along the triangle's edge
         Vector3 v1 = p2 - p1;
         Vector3 v2 = p3 - p1;

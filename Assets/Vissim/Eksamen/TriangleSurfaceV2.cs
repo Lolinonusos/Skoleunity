@@ -134,8 +134,8 @@ public class TriangleSurfaceV2 : MonoBehaviour
         float h = size / resolution;
         float hSize = size / 2.0f;
         
-        for (int z = 0; z < resolution +1; z++) {
-            for (int x = 0; x < resolution +1; x++) {
+        for (int z = 0; z < resolution + 1; z++) {
+            for (int x = 0; x < resolution + 1; x++) {
 
                 Vector3 vertex = new Vector3(min + (x * h), 0, min + (z * h));
                 Vector2 uvTemp = new Vector2(x / (float) resolution, z / (float) resolution);
@@ -162,6 +162,28 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 indices.Add(i + 1);
             }
         }
+
+        // Neighbouring triangles
+        for (int x = 0; x < resolution; x++) {
+            for (int z = 0; z < resolution; z++)
+            {
+                int i = x + z;
+                
+                
+                // Is not an edge triangle
+                // Even triangle
+                neighbours.Add(i - 1);
+                neighbours.Add(i + resolution * 2 + 1);
+                neighbours.Add(i + 1);
+
+                // Odd triangle
+                neighbours.Add(i - 1);
+                neighbours.Add(i + 1);
+                neighbours.Add(i - resolution * 2 + 1);
+
+            }
+        }
+
         mesh.triangles = indices.ToArray();
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
@@ -268,19 +290,12 @@ public class TriangleSurfaceV2 : MonoBehaviour
     }
     
     private void CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3) {
-        p1 = new Vector3(2f, 0f, 0f);
-        p2 = new Vector3(0f, 1f, 0f);
-        p3 = new Vector3(0f, 0f, 0.5f);
-        print("V1: " + p1 + "  V2: " + p2 + "  V3: " + p3);
-        
         // Calculates two vector along the triangle's edge
         Vector3 v1 = p2 - p1;
         Vector3 v2 = p3 - p1;
-    
-        print("A: " + v1 + "  B: " + v2);
-        
+
         // Calculates the cross product of the two vectors to get the normal vector
         normalVector = Vector3.Cross(v1, v2).normalized;
-        print("Triangle normal" + normalVector + " Magnitude: " + normalVector.magnitude);
+        //print("Triangle normal" + normalVector + " Magnitude: " + normalVector.magnitude);
     }
 }
