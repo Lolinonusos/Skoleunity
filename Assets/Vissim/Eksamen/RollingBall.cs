@@ -22,6 +22,9 @@ public class RollingBall : MonoBehaviour {
     Vector3 newPosition;
 
     private int triangle = -1;
+
+
+    Vector3 torque; // Position (cross) Force
     
     // Collision between balls
     private List<RollingBall> ballsInScene = new List<RollingBall>();
@@ -41,12 +44,13 @@ public class RollingBall : MonoBehaviour {
     
     void FixedUpdate() {
         TIME += Time.deltaTime;
-
+        Vector3 force = new Vector3();
+        
         if (SurfaceCollision())
         {
             Vector3 surfaceNormal = triangleSurface.normalVector;
             Vector3 normalForce = -Vector3.Dot(gravity, surfaceNormal) * surfaceNormal;
-            Vector3 force = gravity + normalForce;
+            force = gravity + normalForce;
             acceleration = force;
             currentVelocity = Vector3.ProjectOnPlane(currentVelocity, surfaceNormal);
             SetSplineControlPoint();
@@ -79,6 +83,7 @@ public class RollingBall : MonoBehaviour {
         newPosition = transform.position + newVelocity * Time.fixedDeltaTime;
    
         transform.position = newPosition;
+        torque = Vector3.Cross(transform.position, force);
     }
 
     private bool SurfaceCollision() {

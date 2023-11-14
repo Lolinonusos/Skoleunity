@@ -97,8 +97,8 @@ public class PunktskyRender : MonoBehaviour
         
         // GPU instancing
         for (int i = 0; i < vertices.Length; i++) {
-        
-            Matrix4x4 matrixToAdd = Matrix4x4.Translate(vertices[i]);
+            Matrix4x4 matrixToAdd = Matrix4x4.identity;
+            matrixToAdd = Matrix4x4.Translate(vertices[i]);
             
             vertMatrices.Add(matrixToAdd);
         

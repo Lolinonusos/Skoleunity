@@ -47,7 +47,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   triangleSurface: {fileID: 0}
-  bouncyness: 1
+  radius: 3
+  currentVelocity: {x: 0, y: 0, z: 0}
+  newVelocity: {x: 0, y: 0, z: 0}
+  splineRes: 10
 --- !u!33 &1035137098166656637
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -76,7 +79,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 50cd7d959c6593b438474d3441c1ac1a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
