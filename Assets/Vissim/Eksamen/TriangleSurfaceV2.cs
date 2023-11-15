@@ -254,7 +254,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
 
         // Check if we are in a different triangle, update normal vector if true
         if (previousTriangle != currentTriangle) {
-            print("Entered triangle number: " + currentTriangle);
+            //print("Entered triangle number: " + currentTriangle);
             previousTriangle = currentTriangle;
             previousNormalVector = normalVector;
             CalculateNormalVector(v1, v2, v3);

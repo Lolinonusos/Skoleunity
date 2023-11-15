@@ -97,16 +97,30 @@ public class RollingBall : MonoBehaviour {
         if (Mathf.Abs(dotProduct) <= radius) {
             barycY = baryc.y;
             Vector3 collisionPos = pos + dotProduct * normalVec;
-            print("CBT");
             return true;
         }
         return false;
     }
     
-    public void BallCollision(RollingBall otherBall) {
+    public void BallCollision(RollingBall otherBall, float distance) {
+        print("Ball Collisioncheck works");
+        
         Vector3 direction = transform.position - otherBall.transform.position;
 
-        Vector3 impulse = new Vector3();
+        Vector3 normal = direction / distance;
+
+        Vector3 minTransDist;
+        if (true)
+        {
+            minTransDist = direction;
+        }
+        
+        Vector3 vel = newVelocity - otherBall.newVelocity;
+        
+
+        float impactSpeed = Vector3.Dot(vel, minTransDist);
+        
+        Vector3 impulse = normal;
         
         newVelocity = newVelocity + impulse;
         otherBall.newVelocity = otherBall.newVelocity - impulse;
