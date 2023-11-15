@@ -6,7 +6,7 @@ using UnityEngine.Assertions.Must;
 public class RollingBall : MonoBehaviour {
 
     // For physics allowing the ball to collide with a triangle surface
-    [SerializeField] TriangleSurfaceV2 triangleSurface;
+    [SerializeField] public TriangleSurfaceV2 triangleSurface;
     //[SerializeField][Range(0.0f, 10.0f)] private float bouncyness = 1.0f;
     [SerializeField]public float radius = 3f;
     Vector3 gravity = Physics.gravity;
