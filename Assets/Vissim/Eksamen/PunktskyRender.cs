@@ -111,12 +111,6 @@ public class PunktskyRender : MonoBehaviour
         
         rp = new RenderParams(material);
         
-        //positionsBuffer = new ComputeBuffer(vertices.Length, 3*4);
-        //positionsBuffer.SetData(vertices);
-        
-        // Indirect GPU instancing
-        // argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-        // UpdateBuffers();
     }
 
     // Update is called once per frame
@@ -126,10 +120,6 @@ public class PunktskyRender : MonoBehaviour
             // GPU instancing
             Graphics.RenderMeshInstanced(rp, mesh, 0, matrices[i]);
         }
-
-        
-        // Indirect GPU instancing
-        //Graphics.DrawMeshInstancedIndirect(mesh, subMeshIndex, material, new Bounds(Vector3.zero, new Vector3(xAvg, yAvg, zAvg) * 3), argsBuffer);
     }
 
     private void OnDisable()
