@@ -117,6 +117,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
         print("Max positions: " + new Vector3(xMax, yMax, zMax));
         print("Min positions: " + new Vector3(xMin, yMin, zMin));
         
+        // ############################################
         // SETTING UP VERTICES, INDICES AND NEIGHBOURS
         List<Vector3> vertices = new List<Vector3>();
         List<Vector2> uv = new List<Vector2>();

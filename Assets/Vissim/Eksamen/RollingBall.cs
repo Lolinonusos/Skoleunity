@@ -16,7 +16,6 @@ public class RollingBall : MonoBehaviour {
     public Vector3 newVelocity = Vector3.zero;
     Vector3 acceleration = Vector3.zero;
     float mass = 2.0f;
-    float KG; 
     float newton;
     double TIME;
     private float barycY;

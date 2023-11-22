@@ -14,7 +14,7 @@ public class Indirect : MonoBehaviour
     [SerializeField] private bool isYup = false;
     
     // Punkt koordinater
-    Vector3[] vertices; 
+    Vector3[] points; 
     
     ComputeBuffer argsBuffer;
     uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
@@ -46,7 +46,7 @@ public class Indirect : MonoBehaviour
         StreamReader sr = new StreamReader(vertexData);
 
         int lineCount = int.Parse(sr.ReadLine());
-        vertices = new Vector3[lineCount]; // Give correct array size
+        points = new Vector3[lineCount]; // Give correct array size
 
         // Leser gjennom fila
         int counter = 0;
@@ -79,7 +79,7 @@ public class Indirect : MonoBehaviour
             if (zMax < z) { zMax = z; }
             if (zMin > z) { zMin = z; }
           
-            vertices[counter] = new Vector3(x, y, z);
+            points[counter] = new Vector3(x, y, z);
 
             counter++;
         }
@@ -93,10 +93,10 @@ public class Indirect : MonoBehaviour
         //print("Avg values: " + new Vector3(xAvg, yAvg, zAvg));
 
         // Sentrer punkter til origo
-        for (int i = 0; i < vertices.Length; i++) {
-            vertices[i].x -= 0.5f * (xMin + xMax);
-            vertices[i].y -= 0.5f * (yMin + yMax);
-            vertices[i].z -= 0.5f * (zMin + zMax);
+        for (int i = 0; i < points.Length; i++) {
+            points[i].x -= 0.5f * (xMin + xMax);
+            points[i].y -= 0.5f * (yMin + yMax);
+            points[i].z -= 0.5f * (zMin + zMax);
         }
 
         xMin = float.MaxValue;
@@ -105,11 +105,11 @@ public class Indirect : MonoBehaviour
         yMax = float.MinValue;
         zMin = float.MaxValue;
         zMax = float.MinValue;
-        for (int i = 0; i < vertices.Length; i++) {
+        for (int i = 0; i < points.Length; i++) {
             
-            float x = vertices[i].x;
-            float y = vertices[i].y;
-            float z = vertices[i].z;
+            float x = points[i].x;
+            float y = points[i].y;
+            float z = points[i].z;
             
             if (xMax < x) { xMax = x; }
             if (xMin > x) { xMin = x; }
@@ -126,8 +126,8 @@ public class Indirect : MonoBehaviour
         
         commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
         commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
-        positionBuffer = new ComputeBuffer(vertices.Length, 4 * 3);
-        positionBuffer.SetData(vertices);
+        positionBuffer = new ComputeBuffer(points.Length, 4 * 3);
+        positionBuffer.SetData(points);
         // argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
         //UpdateBuffers();
     }
@@ -142,7 +142,7 @@ public class Indirect : MonoBehaviour
         rp.matProps.SetMatrix("objectToWorld", tempMatrix);
         rp.matProps.SetBuffer("positions", positionBuffer);
         commandData[0].indexCountPerInstance = mesh.GetIndexCount(0);
-        commandData[0].instanceCount = (uint)vertices.Length;
+        commandData[0].instanceCount = (uint)points.Length;
         commandBuffer.SetData(commandData);
         Graphics.RenderMeshIndirect(rp, mesh, commandBuffer, commandCount);
     }
@@ -157,22 +157,22 @@ public class Indirect : MonoBehaviour
 
         if (positionBuffer != null) { positionBuffer.Release(); }
         
-        positionBuffer = new ComputeBuffer(vertices.Length, 4 * 3);
+        positionBuffer = new ComputeBuffer(points.Length, 4 * 3);
 
-        Vector4[] positions = new Vector4[vertices.Length];
+        Vector4[] positions = new Vector4[points.Length];
 
-        for (int i = 0; i < vertices.Length; i++) {
+        for (int i = 0; i < points.Length; i++) {
             //print("Position: " + vertices[i]);
-            positions[i] = new Vector4(vertices[i].x, vertices[i].y, vertices[i].z);
+            positions[i] = new Vector4(points[i].x, points[i].y, points[i].z);
             print("Positions as Vector4: " + positions[i]);
             //print(i);
         }
 
-        positionBuffer.SetData(vertices);
+        positionBuffer.SetData(points);
         material.SetBuffer("positionBuffer", positionBuffer);
 
         args[0] = (uint)mesh.GetIndexCount(subMeshIndex);
-        args[1] = (uint)vertices.Length;
+        args[1] = (uint)points.Length;
         args[2] = (uint)mesh.GetIndexStart(subMeshIndex);
         args[3] = (uint)mesh.GetBaseVertex(subMeshIndex);
         argsBuffer.SetData(args);
