@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
-
-
 
 public class RollingBall : MonoBehaviour {
 
@@ -17,22 +14,32 @@ public class RollingBall : MonoBehaviour {
     Vector3 acceleration = Vector3.zero;
     float mass = 2.0f;
     float newton;
-    double TIME;
     private float barycY;
     Vector3 previousPosition;
     Vector3 newPosition;
 
     private int triangle = -1;
 
-
     Vector3 torque; // Position (cross) Force
-    
+
     // Collision between balls
     private List<RollingBall> ballsInScene = new List<RollingBall>();
     
     // Drawing the path the ball has taken
-    [SerializeField][Range(2, 50)]private int splineRes = 10;
-    private List<Vector3> bSplinePoints = new List<Vector3>();
+
+    bSpline bSpline;
+    double TIME;
+    bool startBspline = false;
+    [SerializeField] float splineTimeInterval = 1.0f;
+    [SerializeField][Min(5)] int intervals = 15;
+    int controlPointsPlaced = 0;
+    [SerializeField][Range(1, 200)] private int splineRes = 10;
+    //private List<Vector3> bSplinePoints = new List<Vector3>();
+    bool bSplineConstructed = false;
+
+    List<Vector2> controlpoints;
+    List<float> knotVector;
+
 
     void Awake() {
         previousPosition = transform.position;
@@ -46,15 +53,22 @@ public class RollingBall : MonoBehaviour {
     void FixedUpdate() {
         TIME += Time.deltaTime;
         Vector3 force = new Vector3();
+
+        if (startBspline && TIME >= splineTimeInterval && controlPointsPlaced <= intervals) {
+            TIME = 0;
+            controlPointsPlaced += 1;
+            controlpoints.Add(new Vector2(transform.position.x, transform.position.z));
+            //bSpline.
+        }
         
-        if (SurfaceCollision())
-        {
+        if (SurfaceCollision()) {
+            startBspline = true;
             Vector3 surfaceNormal = triangleSurface.normalVector;
             Vector3 normalForce = -Vector3.Dot(gravity, surfaceNormal) * surfaceNormal;
             force = gravity + normalForce;
             acceleration = force;
             currentVelocity = Vector3.ProjectOnPlane(currentVelocity, surfaceNormal);
-            SetSplineControlPoint();
+            //SetSplineControlPoint();
             
             if (triangleSurface.enteredTriangle)
             {
@@ -67,7 +81,7 @@ public class RollingBall : MonoBehaviour {
                 //print("NORMAL: " + reflectionNormal);
                 //print("VELOCITY: " + newVelocity + "  " + newVelocity.magnitude);
                 //print("POSITION: " + newPosition);
-                TIME = 0;
+                //TIME = 0;
             }
         }
         else {
@@ -127,15 +141,15 @@ public class RollingBall : MonoBehaviour {
         otherBall.newVelocity = otherBall.newVelocity - impulse;
     }
     
-    void SetSplineControlPoint() {
-        bSplinePoints.Add(transform.position);
-    }
-
-    void DrawSpline()
-    {
-        for (float x = 0; x < bSplinePoints.Count; x += 0.005f) {
-            
-            
-        }
-    }
+    // void SetSplineControlPoint() {
+    //     bSplinePoints.Add(transform.position);
+    // }
+    //
+    // void DrawSpline()
+    // {
+    //     for (float x = 0; x < bSplinePoints.Count; x += 0.005f) {
+    //         
+    //         
+    //     }
+    // }
 }

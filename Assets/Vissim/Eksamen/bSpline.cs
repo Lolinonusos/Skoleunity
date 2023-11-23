@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class bSpline {
-	List<int> t = new List<int>(); // Skjotvektor
-	int d = 3; // Grad	
-	int n = 0; // Antall kontrollpunkter
-	List<Vector3> c = new List<Vector3>(); // Kontrollpunkter
+	public List<int> t = new List<int>(); // Skjotvektor
+	public int d = 2; // Grad	
+	public int n = 0; // Antall kontrollpunkter
+	public List<Vector2> c = new List<Vector2>(); // Kontrollpunkter
 
 	bSpline(int grad) {
 		d = grad;

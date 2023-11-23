@@ -22,6 +22,8 @@ public class TriangleSurfaceV2 : MonoBehaviour
     public Vector3 previousNormalVector;
     public Vector3 normalVector;
     public bool enteredTriangle = false;
+
+    List<Vector3> nonModifiedVerts = new List<Vector3>();
     
     void Start() {
         mesh = new Mesh();
@@ -132,18 +134,17 @@ public class TriangleSurfaceV2 : MonoBehaviour
         
         float min = - max;
         float size = max - min;
-        float h = size / resolution;
-        float hSize = size / 2.0f;
+        float stepLength = size / resolution;
+        //float hSize = size / 2.0f;
         
         for (int z = 0; z < resolution + 1; z++) {
             for (int x = 0; x < resolution + 1; x++) {
-
-                Vector3 vertex = new Vector3(min + (x * h), 0, min + (z * h));
-                Vector2 uvTemp = new Vector2(x / (float) resolution, z / (float) resolution);
-                vertex.y = CheckForPoints(new Vector2(vertex.x, vertex.z), h);
+                Vector3 vertex = new Vector3(min + (x * stepLength), 0, min + (z * stepLength));
+                vertex.y = CheckForPoints(new Vector2(vertex.x, vertex.z), stepLength * 0.5f);
                 vertices.Add(vertex);
+                
+                Vector2 uvTemp = new Vector2(x / (float) resolution, z / (float) resolution);
                 uv.Add(uvTemp);
-                //print(vertex);
             }
         }
         mesh.vertices = vertices.ToArray();
@@ -170,7 +171,6 @@ public class TriangleSurfaceV2 : MonoBehaviour
             {
                 int i = x + z;
                 
-                
                 // Is not an edge triangle
                 // Even triangle
                 neighbours.Add(i - 1);
@@ -181,7 +181,6 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 neighbours.Add(i - 1);
                 neighbours.Add(i + 1);
                 neighbours.Add(i - resolution * 2 + 1);
-
             }
         }
 
@@ -192,11 +191,12 @@ public class TriangleSurfaceV2 : MonoBehaviour
         GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
+    // Definerer et kvadratisk område rundt et midtpunkt og skjekker for punkter innenfor kvadratet
     float CheckForPoints(Vector2 vertex, float size) {
         List<float> heightValues = new List<float>();
         float averageHeight = 0;
 
-        // Defining the area:
+        // Defining the square area:
         Vector2 topLeft = new Vector2(vertex.x - size, vertex.y + size);
         Vector2 topRight = new Vector2(vertex.x + size, vertex.y + size);
         Vector2 bottomLeft = new Vector2(vertex.x - size, vertex.y - size);
