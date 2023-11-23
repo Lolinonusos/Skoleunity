@@ -196,7 +196,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
         List<float> heightValues = new List<float>();
         float averageHeight = 0;
 
-        // Defining the area:
+        // Defining the check area:
         Vector2 topLeft = new Vector2(vertex.x - size, vertex.y + size);
         Vector2 topRight = new Vector2(vertex.x + size, vertex.y + size);
         Vector2 bottomLeft = new Vector2(vertex.x - size, vertex.y - size);
