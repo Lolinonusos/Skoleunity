@@ -150,9 +150,17 @@ public class TriangleSurfaceV2 : MonoBehaviour
         mesh.vertices = vertices.ToArray();
         mesh.uv = uv.ToArray();
         
-        // Indices
+        // Indices and neighbours
+        int trisInRow = 2 * resolution;
+        int totalTriangles = trisInRow * resolution;
         for (int x = 0; x < resolution; x++) {
+            // useful constant:
+            int trisUpToThisRow = 2 * x * (resolution - 2);
+            
             for (int z = 0; z < resolution; z++) {
+                int trisUpToThisCol = 2 * z * (resolution - 2);
+                
+                // My own modified from last year 3D programming
                 int i = (x * resolution) + x + z;
                 // First triangle
                 indices.Add(i);
@@ -162,25 +170,45 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 indices.Add(i);
                 indices.Add(i + resolution + 2);
                 indices.Add(i + 1);
-            }
-        }
-
-        // Neighbouring triangles
-        for (int x = 0; x < resolution; x++) {
-            for (int z = 0; z < resolution; z++)
-            {
-                int i = x + z;
                 
-                // Is not an edge triangle
-                // Even triangle
-                neighbours.Add(i - 1);
-                neighbours.Add(i + resolution * 2 + 1);
-                neighbours.Add(i + 1);
+                // Her har jeg sett en del på Anders Åsbø's måte å kalkulere naboer på
+                // jeg måttet endre litt i kalkuleringene slik at de funker med indekseringen min
+                // useful constants
+                int evenTriangle = 2 * (x * resolution + z);
+                int oddTriangle = evenTriangle + 1;
+                
+                // First triangle neightbours
+                // calculate neighbour-triangles and set to -1 if out of bounds:
+                int T0 = oddTriangle + trisInRow;
+                T0 = T0 < totalTriangles ? T0 : -1; // Denne funker som den skal
+                
+                int T1 = oddTriangle;
+                T1 = T1 < trisUpToThisRow + trisInRow ? T1 : -1;
+                
+                int T2 = evenTriangle - 1;
+                T2 = T2 > trisUpToThisRow ? T2 : -1;
+                
+                neighbours.Add(T0);
+                neighbours.Add(T1);
+                neighbours.Add(T2);
+                
+                print("First triangle neighbours: T0:" + T0 + "   T1: " + T1 + "   T2: " + T2);
+                
+                // Second triangle neighbours
+                T0 = oddTriangle + 1;
+                T0 = T0 < trisUpToThisRow + trisInRow ? T0 : -1;
+                
+                T1 = evenTriangle - trisInRow;
+                T1 = T1 >= 0 ? T1 : -1;
 
-                // Odd triangle
-                neighbours.Add(i - 1);
-                neighbours.Add(i + 1);
-                neighbours.Add(i - resolution * 2 + 1);
+                T2 = evenTriangle;
+                T2 = T2 >= trisUpToThisRow + trisInRow ? T2 : -1;
+
+                neighbours.Add(T0);
+                neighbours.Add(T1);
+                neighbours.Add(T2);
+                
+                //print("Second triangle neighbours: T0:" + T0 + "   T1: " + T1 + "   T2: " + T2);
             }
         }
 

@@ -68,10 +68,9 @@ public class RollingBall : MonoBehaviour {
             force = gravity + normalForce;
             acceleration = force;
             currentVelocity = Vector3.ProjectOnPlane(currentVelocity, surfaceNormal);
-            //SetSplineControlPoint();
-            
-            if (triangleSurface.enteredTriangle)
-            {
+
+            // Rolling over trangle edge
+            if (triangleSurface.enteredTriangle) {
                 triangleSurface.enteredTriangle = false;
                 normalForce = (surfaceNormal + surfaceNormal).normalized;
                 currentVelocity = Vector3.ProjectOnPlane(currentVelocity, normalForce);
