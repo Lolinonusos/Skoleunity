@@ -57,7 +57,7 @@ public class RollingBall : MonoBehaviour {
         if (startBspline && TIME >= splineTimeInterval && controlPointsPlaced <= intervals) {
             TIME = 0;
             controlPointsPlaced += 1;
-            controlpoints.Add(new Vector2(transform.position.x, transform.position.z));
+            //controlpoints.Add(new Vector2(transform.position.x, transform.position.z));
             //bSpline.
         }
         
@@ -117,7 +117,7 @@ public class RollingBall : MonoBehaviour {
     }
     
     public void BallCollision(RollingBall otherBall, float distance) {
-        print("Ball Collisioncheck works");
+        //print("Ball Collisioncheck works");
         
         Vector3 direction = transform.position - otherBall.transform.position;
 

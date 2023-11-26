@@ -183,7 +183,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 T0 = T0 < totalTriangles ? T0 : -1; // Denne funker som den skal
                 
                 int T1 = oddTriangle;
-                T1 = T1 < trisUpToThisRow + trisInRow ? T1 : -1;
+                T1 = T1 < totalTriangles ? T1 : -1; // Denne funker som den skal
                 
                 int T2 = evenTriangle - 1;
                 T2 = T2 > trisUpToThisRow ? T2 : -1;
