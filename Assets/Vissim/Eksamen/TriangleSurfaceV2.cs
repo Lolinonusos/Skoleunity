@@ -10,11 +10,26 @@ public struct Triangle {
     public int[] indices;
     public int[] neighbours;
 
+    public Triangle(int newID, int i0, int i1, int i2, int n0, int n1, int n2) {
+        ID = newID;
+        normal = new Vector3();
+        indices = new int[]{ i0, i1, i2 };
+        neighbours = new int[]{ n0, n1, n2 };
+    }
+    
     public Triangle(int newID, Vector3 newNormal, int i0, int i1, int i2, int n0, int n1, int n2) {
         ID = newID;
         normal = newNormal;
         indices = new int[]{ i0, i1, i2 };
         neighbours = new int[]{ n0, n1, n2 };
+    }
+
+    void SetID(int newID) {
+        ID = newID;
+    }
+
+    void SetNormal(Vector3 newNormal) {
+        normal = newNormal;
     }
 }
 
@@ -171,48 +186,59 @@ public class TriangleSurfaceV2 : MonoBehaviour
         int trisInRow = 2 * resolution;
         int totalTriangles = trisInRow * resolution;
         for (int x = 0; x < resolution; x++) {
-            // useful constant:
+            // Teller triangler i og opp til nåværende rad:
             int trisUpToThisRow = 2 * x * (resolution);
             
             for (int z = 0; z < resolution; z++) {
-                int trisUpToThisCol = 2 * z * (resolution - 2);
-                
-                // My own modified from last year 3D programming
+                // My own index placing code modified from last year 3D programming
                 int i = (x * resolution) + x + z;
-                // First triangle
-                indices.Add(i);
-                indices.Add(i + resolution + 1);
-                indices.Add(i + resolution + 2);
-                // Second triangle
-                indices.Add(i);
-                indices.Add(i + resolution + 2);
-                indices.Add(i + 1);
+
+                // First triangle (even)
+                // Calculating indices
+                int I0 = i;
+                int I1 = i + resolution + 1;
+                int I2 = i + resolution + 2;
+
+                indices.Add(I0);
+                indices.Add(I1);
+                indices.Add(I2);
                 
-                // Her har jeg sett en del på Anders Åsbø's måte å kalkulere naboer på
+                // For å finne ut av nabodataene har jeg sett en del på Anders Åsbø's måte å kalkulere naboer på
                 // jeg måttet endre litt i kalkuleringene slik at de funker med indekseringen min
                 // useful constants
                 int evenTriangle = 2 * (x * resolution + z);
                 int oddTriangle = evenTriangle + 1;
                 
-                // First (even) triangle's neightbours
                 // calculate neighbour-triangles and set to -1 if out of bounds:
                 int T0 = oddTriangle + trisInRow;
-                T0 = T0 < totalTriangles ? T0 : -1; // Denne funker som den skal
+                T0 = T0 < totalTriangles ? T0 : -1; 
                 
                 int T1 = oddTriangle;
-                T1 = T1 < totalTriangles ? T1 : -1; // Denne funker som den skal
+                T1 = T1 < totalTriangles ? T1 : -1; 
                 
                 int T2 = evenTriangle - 1;
-                T2 = T2 > trisUpToThisRow ? T2 : -1; // Denne funker som den skal
+                T2 = T2 > trisUpToThisRow ? T2 : -1;
                 
                 neighbours.Add(T0);
                 neighbours.Add(T1);
                 neighbours.Add(T2);
-                
-                
                 //print("First triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
+
+                // Adding triangle
+                Triangle newTri = new Triangle(evenTriangle, I0, I1, I2, T0, T1, T2);
+                triangles.Add(newTri);
+
+                // Second triangle (odd)
+                // Calculating indices
+                I0 = i;
+                I1 = i + resolution + 2;
+                I2 = i + 1;
                 
-                // Second (odd) triangle's neighbours
+                indices.Add(I0);
+                indices.Add(I1);
+                indices.Add(I2);
+                
+                // calculate neighbour-triangles and set to -1 if out of bounds:
                 T0 = oddTriangle + 1;
                 T0 = T0 < trisUpToThisRow + trisInRow ? T0 : -1;
                 
@@ -225,22 +251,23 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 neighbours.Add(T0);
                 neighbours.Add(T1);
                 neighbours.Add(T2);
-                
                 //print("Second triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
+                
+                // Adding triangle
+                newTri = new Triangle(oddTriangle, I0, I1, I2, T0, T1, T2);
+                triangles.Add(newTri);
             }
         }
 
-        for (int i = 0; i < indices.Count / 3; i++) {
-            //if (i % 3 == 0) {
-            Vector3 normalToFind = CalculateNormalVector(vertices[indices[i]], vertices[indices[i + 1]], vertices[indices[i + 2]]);
+        for (int i = 0; i < triangles.Count; i++) {
+            //Vector3 normalToFind = CalculateNormalVector(vertices[indices[i]], vertices[indices[i + 1]], vertices[indices[i + 2]]);
             
-            Triangle newTri = new Triangle(i, normalToFind, indices[i], indices[i + 1], indices[i + 2], neighbours[i], 
-                neighbours[i + 1], neighbours[i + 2]);
+            //Triangle newTri = new Triangle(i, normalToFind, indices[i], indices[i + 1], indices[i + 2], neighbours[i], neighbours[i + 1], neighbours[i + 2]);
             
-            triangles.Add(newTri);
-            print("ID: " + newTri.ID);
-            print("Indices: " + newTri.indices[0] + newTri.indices[1] + newTri.indices[2]);
-            print("Neighbours: " + newTri.neighbours[0] + newTri.neighbours[1] + newTri.neighbours[2]);
+            //triangles.Add(newTri);
+            print("ID: " + triangles[i].ID);
+            print("Indices: " + triangles[i].indices[0] + ", " + triangles[i].indices[1] + ", " + triangles[i].indices[2]);
+            //print("Neighbours: " + triangles[i].neighbours[0] + ", " + triangles[i].neighbours[1] + ", " + triangles[i].neighbours[2]);
         }
         print("Total triangles:  "+ triangles.Count);
         
