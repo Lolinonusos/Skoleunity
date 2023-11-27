@@ -155,7 +155,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
         int totalTriangles = trisInRow * resolution;
         for (int x = 0; x < resolution; x++) {
             // useful constant:
-            int trisUpToThisRow = 2 * x * (resolution - 2);
+            int trisUpToThisRow = 2 * x * (resolution);
             
             for (int z = 0; z < resolution; z++) {
                 int trisUpToThisCol = 2 * z * (resolution - 2);
@@ -186,29 +186,29 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 T1 = T1 < totalTriangles ? T1 : -1; // Denne funker som den skal
                 
                 int T2 = evenTriangle - 1;
-                T2 = T2 > trisUpToThisRow ? T2 : -1;
+                T2 = T2 > trisUpToThisRow ? T2 : -1; // Denne funker som den skal
                 
                 neighbours.Add(T0);
                 neighbours.Add(T1);
                 neighbours.Add(T2);
                 
-                print("First triangle neighbours: T0:" + T0 + "   T1: " + T1 + "   T2: " + T2);
+                //print("First triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
                 
                 // Second triangle neighbours
                 T0 = oddTriangle + 1;
-                T0 = T0 < trisUpToThisRow + trisInRow ? T0 : -1;
+                T0 = T0 < trisUpToThisRow + trisInRow ? T0 : -1; // Denne funker som den skal
                 
                 T1 = evenTriangle - trisInRow;
-                T1 = T1 >= 0 ? T1 : -1;
+                T1 = T1 >= trisUpToThisRow + trisInRow ? T1 : -1;
 
                 T2 = evenTriangle;
-                T2 = T2 >= trisUpToThisRow + trisInRow ? T2 : -1;
+                T2 = T2 >= 0 ? T2 : -1; // Denne funker som den skal
 
                 neighbours.Add(T0);
                 neighbours.Add(T1);
                 neighbours.Add(T2);
                 
-                //print("Second triangle neighbours: T0:" + T0 + "   T1: " + T1 + "   T2: " + T2);
+                print("Second triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
             }
         }
 
