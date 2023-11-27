@@ -177,7 +177,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 int evenTriangle = 2 * (x * resolution + z);
                 int oddTriangle = evenTriangle + 1;
                 
-                // First triangle neightbours
+                // First (even) triangle's neightbours
                 // calculate neighbour-triangles and set to -1 if out of bounds:
                 int T0 = oddTriangle + trisInRow;
                 T0 = T0 < totalTriangles ? T0 : -1; // Denne funker som den skal
@@ -194,21 +194,21 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 
                 //print("First triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
                 
-                // Second triangle neighbours
+                // Second (odd) triangle's neighbours
                 T0 = oddTriangle + 1;
-                T0 = T0 < trisUpToThisRow + trisInRow ? T0 : -1; // Denne funker som den skal
+                T0 = T0 < trisUpToThisRow + trisInRow ? T0 : -1;
                 
                 T1 = evenTriangle - trisInRow;
-                T1 = T1 >= trisUpToThisRow + trisInRow ? T1 : -1;
+                T1 = T1 >= 0 ? T1 : -1;
 
                 T2 = evenTriangle;
-                T2 = T2 >= 0 ? T2 : -1; // Denne funker som den skal
+                T2 = T2 >= 0 ? T2 : -1;
 
                 neighbours.Add(T0);
                 neighbours.Add(T1);
                 neighbours.Add(T2);
                 
-                print("Second triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
+                //print("Second triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
             }
         }
 
