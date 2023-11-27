@@ -2,6 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEditor.ShaderGraph.Legacy;
+
+public struct Triangle {
+    public int ID;
+    public Vector3 normal;
+    public int[] indices;
+    public int[] neighbours;
+
+    public Triangle(int newID, Vector3 newNormal, int i0, int i1, int i2, int n0, int n1, int n2) {
+        ID = newID;
+        normal = newNormal;
+        indices = new int[]{ i0, i1, i2 };
+        neighbours = new int[]{ n0, n1, n2 };
+    }
+}
 
 public class TriangleSurfaceV2 : MonoBehaviour
 {
@@ -11,6 +26,8 @@ public class TriangleSurfaceV2 : MonoBehaviour
     private float xAvg;
     private float yAvg;
     private float zAvg;
+
+    private List<Triangle> triangles = new List<Triangle>();
     
     [SerializeField] private bool isYup = false;
     // Quads to be placed in each direction
@@ -192,6 +209,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 neighbours.Add(T1);
                 neighbours.Add(T2);
                 
+                
                 //print("First triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
                 
                 // Second (odd) triangle's neighbours
@@ -212,6 +230,20 @@ public class TriangleSurfaceV2 : MonoBehaviour
             }
         }
 
+        for (int i = 0; i < indices.Count / 3; i++) {
+            //if (i % 3 == 0) {
+            Vector3 normalToFind = CalculateNormalVector(vertices[indices[i]], vertices[indices[i + 1]], vertices[indices[i + 2]]);
+            
+            Triangle newTri = new Triangle(i, normalToFind, indices[i], indices[i + 1], indices[i + 2], neighbours[i], 
+                neighbours[i + 1], neighbours[i + 2]);
+            
+            triangles.Add(newTri);
+            print("ID: " + newTri.ID);
+            print("Indices: " + newTri.indices[0] + newTri.indices[1] + newTri.indices[2]);
+            print("Neighbours: " + newTri.neighbours[0] + newTri.neighbours[1] + newTri.neighbours[2]);
+        }
+        print("Total triangles:  "+ triangles.Count);
+        
         mesh.triangles = indices.ToArray();
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
@@ -286,7 +318,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
             //print("Entered triangle number: " + currentTriangle);
             previousTriangle = currentTriangle;
             previousNormalVector = normalVector;
-            CalculateNormalVector(v1, v2, v3);
+            normalVector = CalculateNormalVector(v1, v2, v3);
             enteredTriangle = true;
         }
         
@@ -318,13 +350,13 @@ public class TriangleSurfaceV2 : MonoBehaviour
         return new Vector3(u, v, w);
     }
     
-    private void CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3) {
+    private Vector3 CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3) {
         // Calculates two vector along the triangle's edge
         Vector3 v1 = p2 - p1;
         Vector3 v2 = p3 - p1;
 
         // Calculates the cross product of the two vectors to get the normal vector
-        normalVector = Vector3.Cross(v1, v2).normalized;
+        return Vector3.Cross(v1, v2).normalized;
         //print("Triangle normal" + normalVector + " Magnitude: " + normalVector.magnitude);
     }
 }

@@ -74,13 +74,6 @@ public class RollingBall : MonoBehaviour {
                 triangleSurface.enteredTriangle = false;
                 normalForce = (surfaceNormal + surfaceNormal).normalized;
                 currentVelocity = Vector3.ProjectOnPlane(currentVelocity, normalForce);
-                //print("TIME: " + TIME);
-                //print("NORMAL: " + triangleSurface.normalVector);
-                //print("ACCELERATION: " + acceleration + "  " + acceleration.magnitude);
-                //print("NORMAL: " + reflectionNormal);
-                //print("VELOCITY: " + newVelocity + "  " + newVelocity.magnitude);
-                //print("POSITION: " + newPosition);
-                //TIME = 0;
             }
         }
         else {
