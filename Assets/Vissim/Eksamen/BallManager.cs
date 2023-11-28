@@ -23,10 +23,7 @@ public class BallManager : MonoBehaviour
         // Check for collisions between balls
         for (int i = 0; i < balls.Count; i++) {
             for (int j = i + 1; j < balls.Count; j++) {
-                float distance = Vector3.Distance(balls[i].transform.position, balls[j].transform.position); 
-                if (distance <= balls[j].radius) {
-                    balls[i].BallCollision(balls[j], distance);
-                }    
+                balls[i].BallCollision(balls[j]);
             }
         }
     }

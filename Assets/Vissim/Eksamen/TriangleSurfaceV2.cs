@@ -54,6 +54,8 @@ public class TriangleSurfaceV2 : MonoBehaviour
 
     private float min, max;
     private float depth, height;
+    private float size;
+    private float stepLength;
     
     private int previousTriangle = -1;
     private int currentTriangle = 0;
@@ -173,14 +175,15 @@ public class TriangleSurfaceV2 : MonoBehaviour
         height = yMax;
         
         min = - max;
-        float size = max - min;
-        float stepLength = size / resolution;
+        size = max - min;
+        stepLength = size / resolution;
+        print("stepLength: " + stepLength);
         //float hSize = size / 2.0f;
         
         for (int z = 0; z < resolution + 1; z++) {
             for (int x = 0; x < resolution + 1; x++) {
                 Vector3 vertex = new Vector3(min + (x * stepLength), 0, min + (z * stepLength));
-                vertex.y = CheckForPoints(new Vector2(vertex.x, vertex.z), stepLength * 0.5f);
+                vertex.y = CheckForPoints(vertex, stepLength * 0.5f);
                 vertices.Add(vertex);
                 
                 Vector2 uvTemp = new Vector2(x / (float) resolution, z / (float) resolution);
@@ -284,27 +287,27 @@ public class TriangleSurfaceV2 : MonoBehaviour
     }
 
     // Definerer et kvadratisk område rundt et midtpunkt og skjekker for punkter innenfor kvadratet
-    float CheckForPoints(Vector2 vertex, float size) {
+    float CheckForPoints(Vector3 vertex, float size) {
         List<float> heightValues = new List<float>();
         float averageHeight = 0;
 
         // Defining the square area:
-        Vector2 topLeft = new Vector2(vertex.x - size, vertex.y + size);
-        Vector2 topRight = new Vector2(vertex.x + size, vertex.y + size);
-        Vector2 bottomLeft = new Vector2(vertex.x - size, vertex.y - size);
-        Vector2 bottomRight = new Vector2(vertex.x + size, vertex.y - size);
+        Vector3 topLeft = new Vector3(vertex.x - size, 0.0f, vertex.z + size);
+        Vector3 topRight = new Vector3(vertex.x + size, 0.0f, vertex.z + size);
+        Vector3 bottomLeft = new Vector3(vertex.x - size, 0.0f,vertex.z - size);
+        Vector3 bottomRight = new Vector3(vertex.x + size, 0.0f, vertex.z - size);
 
         for (int i = 0; i < points.Length; i += 50) {
             // Hvis punkt er inne i området, legg de til i en array
             // Check first triangle
             Vector3 temp;
-            temp = getBarycentricCoordinate(topLeft, topRight, bottomLeft, new Vector2(points[i].x, points[i].z));
+            temp = CalcBarycentricCoordinate(topLeft, topRight, bottomLeft, points[i]);
             if (temp is {x: >= 0, y: >= 0, z: >= 0}) {
                 heightValues.Add(points[i].y);
             }
             else {
                 // Check second triangle          
-                temp = getBarycentricCoordinate(topRight, bottomRight, bottomLeft, new Vector2(points[i].x, points[i].z));
+                temp = CalcBarycentricCoordinate(topRight, bottomRight, bottomLeft, points[i]);
                 if (temp is {x: >= 0, y: >= 0, z: >= 0}) {
                     heightValues.Add(points[i].y);
                 }
@@ -338,7 +341,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
             v2 = mesh.vertices[i2];
             v3 = mesh.vertices[i3];
 
-            baryc = getBarycentricCoordinate(new Vector2(v1.x, v1.z), new Vector2(v2.x, v2.z), new Vector2(v3.x, v3.z), objectPos);
+            baryc = CalcBarycentricCoordinate(v1, v2, v3, objectPos);
             if (baryc is { x: >= 0, y: >= 0, z: >= 0 }) {
                 currentTriangle = i;
                 break;
@@ -359,23 +362,33 @@ public class TriangleSurfaceV2 : MonoBehaviour
     }
 
     // Anders Åsbø
-    public Vector3 SurfaceCollision(Vector2 objectPos) {
+    public Vector3 SurfaceCollision(Vector3 objectPos) {
 
-        int quadsInRow = Mathf.FloorToInt((max - min) / resolution);
-        int i = Mathf.FloorToInt((objectPos.x - min) / resolution);
-        int j = Mathf.FloorToInt((objectPos.y - min) / resolution);
-        int triangleIndex = 2 * (j + i * quadsInRow);
+        //int quadsInRow = Mathf.FloorToInt(stepLength / resolution);
+        //print("Size: "+ stepLength);
+        //print("QuadsinRow: "+ quadsInRow);
+
+        int i = Mathf.FloorToInt((objectPos.x - min) / stepLength);
+        int j = Mathf.FloorToInt((objectPos.z - min) / stepLength);
+        //print("i: "+ i);
+        //print("j: "+ j);
+        
+        
+        int triangleIndex = 2 * (j + i * resolution);
 
         // Check to see if index out of bounds, set to 0 if it is 
         triangleIndex = triangleIndex < 0 ? 0 : triangleIndex;
         triangleIndex = triangleIndex > triangles.Count - 1 ? 0 : triangleIndex;
+        //print("TriangleIndex: "+ triangleIndex);
         
+        //print("Triangles: "+ triangles.Count);
         Triangle currentTri = triangles[triangleIndex];
+
 
         int f = 0;
         while (true)
         {
-            Debug.Log("Chinchenghanchi " + f);
+            //Debug.Log("Chinchenghanchi " + f);
             f++;
             //Vector3 a = currentTri.vertices[0];
             //Vector3 b = currentTri.vertices[1];
@@ -384,16 +397,29 @@ public class TriangleSurfaceV2 : MonoBehaviour
             Vector3 a = mesh.vertices[currentTri.indices[0]];
             Vector3 b = mesh.vertices[currentTri.indices[1]];
             Vector3 c = mesh.vertices[currentTri.indices[2]];
+            // print("a: " + a);
+            // print("b: " + b);
+            // print("c: " + c);
             
-            Vector3 uvw = getBarycentricCoordinate(a, b, c, objectPos);
+            
+            Vector3 uvw = CalcBarycentricCoordinate(a, b, c, objectPos);
+            
             if (uvw is {x: >= 0, y: >= 0, z: >= 0}) {
-
-                normalVector = currentTri.normal;
+                normalVector = CalculateNormalVector(a, b, c);
                 Vector3 hitPos = uvw.x * a + uvw.y * b + uvw.z * c;
                 
-                //Vector3 difference
+                // if (previousTriangle != currentTri.ID) {
+                //     //print("Entered triangle number: " + currentTriangle);
+                //     previousTriangle = currentTri.ID;
+                //     previousNormalVector = normalVector;
+                //     normalVector = CalculateNormalVector(a, b, c);
+                //     // normalVector = currentTri.normal;
+                //     enteredTriangle = true;
+                // }
+                Vector3 difference = hitPos - objectPos;
+                hitPos = objectPos + Vector3.Dot(difference, normalVector) * normalVector;
                 
-                
+                //print("Suksess " + currentTri.ID);
                 return hitPos;
             }
             
@@ -411,36 +437,47 @@ public class TriangleSurfaceV2 : MonoBehaviour
 
             if (currentTri.neighbours[opposingIndex] >= 0) {
                 currentTri = triangles[currentTri.neighbours[opposingIndex]];
-                //Debug.Log("Spam?");
+                //Debug.Log("Spam? " + currentTri.ID);
                 continue;
             }
             
-
-        
             // No neighbour triangle was found
             Debug.Log("Out of bounds");
             return Vector3.zero;
-        }
+        }            
+        // Debug.Log("Wrong out of bounds");
+        // return Vector3.zero;
     }   
     
-    public Vector3 getBarycentricCoordinate(Vector2 a, Vector2 b, Vector2 c, Vector2 x) {
+    public Vector3 CalcBarycentricCoordinate(Vector3 a, Vector3 b, Vector3 c, Vector3 x) {
 
-        Vector2 v0 = (b - a);
-        Vector2 v1 = c - a;
-        Vector2 v2 = x - a;
-
-        float d00 = Vector2.Dot(v0, v0);
-        float d01 = Vector2.Dot(v0, v1);
-        float d11 = Vector2.Dot(v1, v1);
-        float d20 = Vector2.Dot(v2, v0);
-        float d21 = Vector2.Dot(v2, v1);
-        float denom = d00 * d11 - d01 * d01;
-
-        float v = (d11 * d20 - d01 * d21) / denom;
-        float w = (d00 * d21 - d01 * d20) / denom;
-        float u = 1.0f - v - w;
-
-        return new Vector3(u, v, w);
+        // Vector2 v0 = (b - a);
+        // Vector2 v1 = c - a;
+        // Vector2 v2 = x - a;
+        //
+        // float d00 = Vector2.Dot(v0, v0);
+        // float d01 = Vector2.Dot(v0, v1);
+        // float d11 = Vector2.Dot(v1, v1);
+        // float d20 = Vector2.Dot(v2, v0);
+        // float d21 = Vector2.Dot(v2, v1);
+        // float denom = d00 * d11 - d01 * d01;
+        //
+        // float v = (d11 * d20 - d01 * d21) / denom;
+        // float w = (d00 * d21 - d01 * d20) / denom;
+        // float u = 1.0f - v - w;
+        
+        //return new Vector3(u, v, w);
+        var uvw = Vector3.zero;
+        //
+        Vector3 ab = b - a;
+        Vector3 ac = c - a;
+        Vector3 ax = x - a; 
+        float signedArea = ab.x * ac.z - ac.x * ab.z;
+        uvw.y = (ax.x * ac.z - ac.x * ax.z) / signedArea;
+        uvw.z = (ab.x * ax.z - ax.x * ab.z) / signedArea;
+        uvw.x = 1.0f - uvw.y - uvw.z;
+        //
+        return uvw;
     }
     
     public Vector3 CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3) {

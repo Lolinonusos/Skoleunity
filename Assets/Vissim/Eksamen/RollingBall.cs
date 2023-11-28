@@ -68,7 +68,8 @@ public class RollingBall : MonoBehaviour {
             force = gravity + normalForce;
             acceleration = force;
             currentVelocity = Vector3.ProjectOnPlane(currentVelocity, surfaceNormal);
-
+            //print("Collision");
+            
             // Rolling over trangle edge
             if (triangleSurface.enteredTriangle) {
                 triangleSurface.enteredTriangle = false;
@@ -96,20 +97,45 @@ public class RollingBall : MonoBehaviour {
     private bool SurfaceCollision() {
         // Using (k = C + ((S - C) . n) * n when |(S - C) . n| <= r) to calculate the collision point
         Vector3 pos = transform.position; // C
-        Vector3 baryc = triangleSurface.baryc(new Vector2(pos.x, pos.z)); // S
-        //Vector3 baryc = triangleSurface.SurfaceCollision(new Vector2(pos.x, pos.z)); // S
+        //Vector3 baryc = triangleSurface.baryc(new Vector2(pos.x, pos.z)); // S
+        Vector3 hitPos = triangleSurface.SurfaceCollision(pos); // S
         Vector3 normalVec = triangleSurface.normalVector; // n
 
-        float dotProduct = Vector3.Dot(baryc - pos, normalVec);
+        Vector3 distVec = pos - hitPos;
+        float dist = distVec.magnitude;
+        //print("distvec: " + hitPos + "  ballposition: " + pos);
         
-        if (Mathf.Abs(dotProduct) <= radius) {
+        float dotProduct = Vector3.Dot(hitPos - pos, normalVec);
+        // (Mathf.Abs(dotProduct)
+        if ((Mathf.Abs(dotProduct)) <= radius) {
+            //print("true");
             return true;
         }
+        //print("false");
         return false;
     }
     
-    public void BallCollision(RollingBall otherBall, float distance) {
+    public void BallCollision(RollingBall otherBall) {
         //print("Ball Collisioncheck works");
+        Vector3 thisPos = transform.position;
+        Vector3 otherPos = otherBall.transform.position;
+        
+        
+        float distance = Vector3.Distance(thisPos, otherPos);
+        
+        // Check if balls are overlapping, exit if they do not
+        if (distance >= radius + otherBall.radius) {
+            return;
+        }
+
+        float overlap = 0.5f * (distance - radius - otherBall.radius);
+
+        // Displace balls
+        thisPos -= overlap * (thisPos - otherPos) / distance;
+        otherPos += overlap * (otherPos - thisPos) / distance;
+
+        transform.position = thisPos;
+        otherBall.transform.position = otherPos;
         
         Vector3 direction = transform.position - otherBall.transform.position;
 
@@ -126,7 +152,7 @@ public class RollingBall : MonoBehaviour {
 
         float impactSpeed = Vector3.Dot(vel, minTransDist);
         
-        Vector3 impulse = normal;
+        Vector3 impulse = minTransDist * impactSpeed;
         
         newVelocity = newVelocity + impulse;
         otherBall.newVelocity = otherBall.newVelocity - impulse;
