@@ -7,12 +7,14 @@ using UnityEditor.ShaderGraph.Legacy;
 public struct Triangle {
     public int ID;
     public Vector3 normal;
+    public Vector3[] vertices;
     public int[] indices;
     public int[] neighbours;
 
-    public Triangle(int newID, int i0, int i1, int i2, int n0, int n1, int n2) {
+    public Triangle(int newID, Vector3 v0, Vector3 v1, Vector3 v2, int i0, int i1, int i2, int n0, int n1, int n2) {
         ID = newID;
         normal = new Vector3();
+        vertices = new Vector3[]{ v0, v1, v2};
         indices = new int[]{ i0, i1, i2 };
         neighbours = new int[]{ n0, n1, n2 };
     }
@@ -20,15 +22,16 @@ public struct Triangle {
     public Triangle(int newID, Vector3 newNormal, int i0, int i1, int i2, int n0, int n1, int n2) {
         ID = newID;
         normal = newNormal;
+        vertices = new Vector3[]{};
         indices = new int[]{ i0, i1, i2 };
         neighbours = new int[]{ n0, n1, n2 };
     }
 
-    void SetID(int newID) {
+    public void SetID(int newID) {
         ID = newID;
     }
 
-    void SetNormal(Vector3 newNormal) {
+    public void SetNormal(Vector3 newNormal) {
         normal = newNormal;
     }
 }
@@ -49,6 +52,9 @@ public class TriangleSurfaceV2 : MonoBehaviour
     [SerializeField][Range(1, 10000)] private int resolution;
     private Mesh mesh;
 
+    private float min, max;
+    private float depth, height;
+    
     private int previousTriangle = -1;
     private int currentTriangle = 0;
     public Vector3 previousNormalVector;
@@ -159,12 +165,14 @@ public class TriangleSurfaceV2 : MonoBehaviour
         List<int> neighbours = new List<int>();
 
         // Make a perfect square
-        float max = xMax * 0.5f;
+        max = xMax * 0.5f;
         if (xMax < zMax) {
                 max = zMax * 0.5f;
-        } 
+        }
+
+        height = yMax;
         
-        float min = - max;
+        min = - max;
         float size = max - min;
         float stepLength = size / resolution;
         //float hSize = size / 2.0f;
@@ -222,10 +230,10 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 neighbours.Add(T0);
                 neighbours.Add(T1);
                 neighbours.Add(T2);
-                //print("First triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
-
+                
                 // Adding triangle
-                Triangle newTri = new Triangle(evenTriangle, I0, I1, I2, T0, T1, T2);
+                Triangle newTri = new Triangle(evenTriangle, vertices[I0], vertices[I1], vertices[I2], I0, I1, I2, T0, T1, T2);
+                newTri.SetNormal(CalculateNormalVector(newTri.vertices[0], newTri.vertices[1], newTri.vertices[2]));
                 triangles.Add(newTri);
 
                 // Second triangle (odd)
@@ -251,25 +259,22 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 neighbours.Add(T0);
                 neighbours.Add(T1);
                 neighbours.Add(T2);
-                //print("Second triangle neighbours:  T0: " + T0 + "   T1: " + T1 + "   T2: " + T2);
                 
                 // Adding triangle
-                newTri = new Triangle(oddTriangle, I0, I1, I2, T0, T1, T2);
+                newTri = new Triangle(oddTriangle, vertices[I0], vertices[I1], vertices[I2], I0, I1, I2, T0, T1, T2);
+                newTri.SetNormal(CalculateNormalVector(newTri.vertices[0], newTri.vertices[1], newTri.vertices[2]));
                 triangles.Add(newTri);
             }
         }
 
         for (int i = 0; i < triangles.Count; i++) {
-            //Vector3 normalToFind = CalculateNormalVector(vertices[indices[i]], vertices[indices[i + 1]], vertices[indices[i + 2]]);
-            
-            //Triangle newTri = new Triangle(i, normalToFind, indices[i], indices[i + 1], indices[i + 2], neighbours[i], neighbours[i + 1], neighbours[i + 2]);
-            
             //triangles.Add(newTri);
-            print("ID: " + triangles[i].ID);
-            print("Indices: " + triangles[i].indices[0] + ", " + triangles[i].indices[1] + ", " + triangles[i].indices[2]);
+            //print("ID: " + triangles[i].ID);
+            print("triangle normal: " + triangles[i].normal);
+            //print("Indices: " + triangles[i].indices[0] + ", " + triangles[i].indices[1] + ", " + triangles[i].indices[2]);
             //print("Neighbours: " + triangles[i].neighbours[0] + ", " + triangles[i].neighbours[1] + ", " + triangles[i].neighbours[2]);
         }
-        print("Total triangles:  "+ triangles.Count);
+        //print("Total triangles:  "+ triangles.Count);
         
         mesh.triangles = indices.ToArray();
         mesh.RecalculateNormals();
@@ -353,8 +358,69 @@ public class TriangleSurfaceV2 : MonoBehaviour
         return baryc.x * v1 + baryc.y * v2 + baryc.z * v3;
     }
 
-    Vector3 educatedBaryc() {
-        return Vector3.zero;
+    // Anders Åsbø
+    public Vector3 SurfaceCollision(Vector2 objectPos) {
+
+        int quadsInRow = Mathf.FloorToInt((max - min) / resolution);
+        int i = Mathf.FloorToInt((objectPos.x - min) / resolution);
+        int j = Mathf.FloorToInt((objectPos.y - min) / resolution);
+        int triangleIndex = 2 * (j + i * quadsInRow);
+
+        // Check to see if index out of bounds, set to 0 if it is 
+        triangleIndex = triangleIndex < 0 ? 0 : triangleIndex;
+        triangleIndex = triangleIndex > triangles.Count - 1 ? 0 : triangleIndex;
+        
+        Triangle currentTri = triangles[triangleIndex];
+
+        int f = 0;
+        while (true)
+        {
+            Debug.Log("Chinchenghanchi " + f);
+            f++;
+            //Vector3 a = currentTri.vertices[0];
+            //Vector3 b = currentTri.vertices[1];
+            //Vector3 c = currentTri.vertices[2];
+
+            Vector3 a = mesh.vertices[currentTri.indices[0]];
+            Vector3 b = mesh.vertices[currentTri.indices[1]];
+            Vector3 c = mesh.vertices[currentTri.indices[2]];
+            
+            Vector3 uvw = getBarycentricCoordinate(a, b, c, objectPos);
+            if (uvw is {x: >= 0, y: >= 0, z: >= 0}) {
+
+                normalVector = currentTri.normal;
+                Vector3 hitPos = uvw.x * a + uvw.y * b + uvw.z * c;
+                
+                //Vector3 difference
+                
+                
+                return hitPos;
+            }
+            
+            // We are not inside the current triangle
+            int opposingIndex;
+            if (uvw.x <= uvw.y && uvw.x <= uvw.z) {
+                opposingIndex = 0;
+            }
+            else if (uvw.y <= uvw.z) {
+                opposingIndex = 1;
+            }
+            else {
+                opposingIndex = 2;
+            }
+
+            if (currentTri.neighbours[opposingIndex] >= 0) {
+                currentTri = triangles[currentTri.neighbours[opposingIndex]];
+                //Debug.Log("Spam?");
+                continue;
+            }
+            
+
+        
+            // No neighbour triangle was found
+            Debug.Log("Out of bounds");
+            return Vector3.zero;
+        }
     }   
     
     public Vector3 getBarycentricCoordinate(Vector2 a, Vector2 b, Vector2 c, Vector2 x) {
@@ -377,7 +443,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
         return new Vector3(u, v, w);
     }
     
-    private Vector3 CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3) {
+    public Vector3 CalculateNormalVector(Vector3 p1, Vector3 p2, Vector3 p3) {
         // Calculates two vector along the triangle's edge
         Vector3 v1 = p2 - p1;
         Vector3 v2 = p3 - p1;

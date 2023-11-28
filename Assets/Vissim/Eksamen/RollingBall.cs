@@ -97,13 +97,12 @@ public class RollingBall : MonoBehaviour {
         // Using (k = C + ((S - C) . n) * n when |(S - C) . n| <= r) to calculate the collision point
         Vector3 pos = transform.position; // C
         Vector3 baryc = triangleSurface.baryc(new Vector2(pos.x, pos.z)); // S
+        //Vector3 baryc = triangleSurface.SurfaceCollision(new Vector2(pos.x, pos.z)); // S
         Vector3 normalVec = triangleSurface.normalVector; // n
 
         float dotProduct = Vector3.Dot(baryc - pos, normalVec);
         
         if (Mathf.Abs(dotProduct) <= radius) {
-            barycY = baryc.y;
-            Vector3 collisionPos = pos + dotProduct * normalVec;
             return true;
         }
         return false;
