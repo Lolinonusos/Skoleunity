@@ -49,9 +49,10 @@ public class TriangleSurfaceV2 : MonoBehaviour
     
     [SerializeField] private bool isYup = false;
     // Quads to be placed in each direction
-    [SerializeField][Range(1, 10000)] private int resolution;
+    [SerializeField][Range(1, 200)] private int resolution;
     private Mesh mesh;
 
+    [SerializeField][Range(1, 100)] private int skip;
     private float min, max;
     private float depth, height;
     private float size;
@@ -270,13 +271,13 @@ public class TriangleSurfaceV2 : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < triangles.Count; i++) {
+        //for (int i = 0; i < triangles.Count; i++) {
             //triangles.Add(newTri);
             //print("ID: " + triangles[i].ID);
-            print("triangle normal: " + triangles[i].normal);
+            //print("triangle normal: " + triangles[i].normal);
             //print("Indices: " + triangles[i].indices[0] + ", " + triangles[i].indices[1] + ", " + triangles[i].indices[2]);
             //print("Neighbours: " + triangles[i].neighbours[0] + ", " + triangles[i].neighbours[1] + ", " + triangles[i].neighbours[2]);
-        }
+        //}
         //print("Total triangles:  "+ triangles.Count);
         
         mesh.triangles = indices.ToArray();
@@ -297,7 +298,7 @@ public class TriangleSurfaceV2 : MonoBehaviour
         Vector3 bottomLeft = new Vector3(vertex.x - size, 0.0f,vertex.z - size);
         Vector3 bottomRight = new Vector3(vertex.x + size, 0.0f, vertex.z - size);
 
-        for (int i = 0; i < points.Length; i += 50) {
+        for (int i = 0; i < points.Length; i += skip) {
             // Hvis punkt er inne i området, legg de til i en array
             // Check first triangle
             Vector3 temp;
@@ -451,23 +452,24 @@ public class TriangleSurfaceV2 : MonoBehaviour
     
     public Vector3 CalcBarycentricCoordinate(Vector3 a, Vector3 b, Vector3 c, Vector3 x) {
 
-        // Vector2 v0 = (b - a);
-        // Vector2 v1 = c - a;
-        // Vector2 v2 = x - a;
-        //
-        // float d00 = Vector2.Dot(v0, v0);
-        // float d01 = Vector2.Dot(v0, v1);
-        // float d11 = Vector2.Dot(v1, v1);
-        // float d20 = Vector2.Dot(v2, v0);
-        // float d21 = Vector2.Dot(v2, v1);
-        // float denom = d00 * d11 - d01 * d01;
-        //
-        // float v = (d11 * d20 - d01 * d21) / denom;
-        // float w = (d00 * d21 - d01 * d20) / denom;
-        // float u = 1.0f - v - w;
+        Vector2 v0 = new Vector2(b.x, b.z) - new Vector2(a.x, a.z);
+        Vector2 v1 = new Vector2(c.x, c.z) - new Vector2(a.x, a.z);
+        Vector2 v2 = new Vector2(x.x, x.z) - new Vector2(a.x, a.z);
         
-        //return new Vector3(u, v, w);
-        var uvw = Vector3.zero;
+        float d00 = Vector2.Dot(v0, v0);
+        float d01 = Vector2.Dot(v0, v1);
+        float d11 = Vector2.Dot(v1, v1);
+        float d20 = Vector2.Dot(v2, v0);
+        float d21 = Vector2.Dot(v2, v1);
+        float denom = d00 * d11 - d01 * d01;
+        
+        Vector3 uvw = Vector3.zero;
+        
+        uvw.y = (d11 * d20 - d01 * d21) / denom;
+        uvw.z = (d00 * d21 - d01 * d20) / denom;
+        uvw.x = 1.0f - uvw.y - uvw.z;
+        
+        return uvw;
         //
         Vector3 ab = b - a;
         Vector3 ac = c - a;

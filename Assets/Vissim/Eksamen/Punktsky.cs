@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class Indirect : MonoBehaviour
+public class Punktsky : MonoBehaviour
 {
     // Filadresse
     [SerializeField]string vertexData;
@@ -123,7 +123,6 @@ public class Indirect : MonoBehaviour
         print("Max positions: " + new Vector3(xMax, yMax, zMax));
         print("Min positions: " + new Vector3(xMin, yMin, zMin));
 
-        
         commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, commandCount, GraphicsBuffer.IndirectDrawIndexedArgs.size);
         commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
         positionBuffer = new ComputeBuffer(points.Length, 4 * 3);
@@ -134,6 +133,9 @@ public class Indirect : MonoBehaviour
     
     void Update() {
 
+        // https://www.youtube.com/watch?v=6mNj3M1il_c
+        // Tegner alle kubene
+        
         Matrix4x4 tempMatrix = Matrix4x4.identity; 
         tempMatrix.SetTRS(new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity, scale);
         RenderParams rp = new RenderParams(material);
@@ -152,29 +154,29 @@ public class Indirect : MonoBehaviour
         commandBuffer = null;
     }
 
-    void UpdateBuffers() {
-        subMeshIndex = Mathf.Clamp(subMeshIndex, 0, mesh.subMeshCount - 1);
-
-        if (positionBuffer != null) { positionBuffer.Release(); }
-        
-        positionBuffer = new ComputeBuffer(points.Length, 4 * 3);
-
-        Vector4[] positions = new Vector4[points.Length];
-
-        for (int i = 0; i < points.Length; i++) {
-            //print("Position: " + vertices[i]);
-            positions[i] = new Vector4(points[i].x, points[i].y, points[i].z);
-            print("Positions as Vector4: " + positions[i]);
-            //print(i);
-        }
-
-        positionBuffer.SetData(points);
-        material.SetBuffer("positionBuffer", positionBuffer);
-
-        args[0] = (uint)mesh.GetIndexCount(subMeshIndex);
-        args[1] = (uint)points.Length;
-        args[2] = (uint)mesh.GetIndexStart(subMeshIndex);
-        args[3] = (uint)mesh.GetBaseVertex(subMeshIndex);
-        argsBuffer.SetData(args);
-    }
+    // void UpdateBuffers() {
+    //     subMeshIndex = Mathf.Clamp(subMeshIndex, 0, mesh.subMeshCount - 1);
+    //
+    //     if (positionBuffer != null) { positionBuffer.Release(); }
+    //     
+    //     positionBuffer = new ComputeBuffer(points.Length, 4 * 3);
+    //
+    //     Vector4[] positions = new Vector4[points.Length];
+    //
+    //     for (int i = 0; i < points.Length; i++) {
+    //         //print("Position: " + vertices[i]);
+    //         positions[i] = new Vector4(points[i].x, points[i].y, points[i].z);
+    //         print("Positions as Vector4: " + positions[i]);
+    //         //print(i);
+    //     }
+    //
+    //     positionBuffer.SetData(points);
+    //     material.SetBuffer("positionBuffer", positionBuffer);
+    //
+    //     args[0] = (uint)mesh.GetIndexCount(subMeshIndex);
+    //     args[1] = (uint)points.Length;
+    //     args[2] = (uint)mesh.GetIndexStart(subMeshIndex);
+    //     args[3] = (uint)mesh.GetBaseVertex(subMeshIndex);
+    //     argsBuffer.SetData(args);
+    // }
 }

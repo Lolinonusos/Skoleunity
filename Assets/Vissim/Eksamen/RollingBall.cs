@@ -67,15 +67,15 @@ public class RollingBall : MonoBehaviour {
     }
     
     void FixedUpdate() {
-        TIME += Time.deltaTime;
+        //TIME += Time.deltaTime;
         Vector3 force = new Vector3();
 
-        if (startBspline && TIME >= splineTimeInterval && controlPointsPlaced <= intervals) {
-            TIME = 0;
-            controlPointsPlaced += 1;
-            //controlpoints.Add(new Vector2(transform.position.x, transform.position.z));
-            //bSpline.
-        }
+        // if (startBspline && TIME >= splineTimeInterval && controlPointsPlaced <= intervals) {
+        //     TIME = 0;
+        //     controlPointsPlaced += 1;
+        //     //controlpoints.Add(new Vector2(transform.position.x, transform.position.z));
+        //     //bSpline.
+        // }
         
         if (SurfaceCollision()) {
             startBspline = true;
@@ -146,13 +146,15 @@ public class RollingBall : MonoBehaviour {
 
         float overlap = 0.5f * (distance - radius - otherBall.radius);
 
+        // https://www.youtube.com/watch?v=LPzyNOHY3A4
         // Displace balls
-        thisPos -= overlap * (thisPos - otherPos) / distance;
-        otherPos -= overlap * (otherPos - thisPos) / distance;
+        thisPos -= overlap * (thisPos - otherPos) / 2;
+        otherPos -= overlap * (otherPos - thisPos) / 2;
 
-        transform.position = thisPos;
-        otherBall.transform.position = otherPos;
+        //transform.position = thisPos;
+        //otherBall.transform.position = otherPos;
         
+        // https://github.com/NesquikPlus/opengl_collision/blob/master/Game.cpp
         // Normal
         Vector3 collisionNormal = (otherPos - thisPos);
         collisionNormal = Vector3.Normalize(collisionNormal);
@@ -169,10 +171,11 @@ public class RollingBall : MonoBehaviour {
         // Vector3 direction1 = Vector3.Normalize(-(currentVelocity - proj1));
         // Vector3 direction2 = Vector3.Normalize(-(otherBall.currentVelocity - proj2));
 
-        newVelocity = (newVelocity - proj1) + (v1n2 * collisionNormal);
-        otherBall.newVelocity = (newVelocity - proj2) + (v2n2 * collisionNormal);
+        //newVelocity = (newVelocity - proj1) + (v1n2 * collisionNormal);
+        //otherBall.newVelocity = (newVelocity - proj2) + (v2n2 * collisionNormal);
 
-
+        newVelocity = (newVelocity - 2 * collisionNormal);
+        otherBall.newVelocity = (newVelocity - 2 * collisionNormal);
 
         //newVelocity = newVelocity + impulse;
         //otherBall.newVelocity = otherBall.newVelocity - impulse;
