@@ -17,8 +17,7 @@ Shader "Custom/Goblin"
         #define UNITY_INDIRECT_DRAW_ARGS IndirectDrawIndexedArgs
         #include "UnityIndirect.cginc"
 
-        Texture2D _MainTex;
-        SamplerState samplerMaintTex;
+        sampler2D _MainTex;
         
         struct v2f {
             float4 pos : SV_POSITION;
@@ -45,14 +44,17 @@ Shader "Custom/Goblin"
             const float4 wPos = mul(objectToWorld, v.vertex + float4(positions[instanceID][0], positions[instanceID][1], positions[instanceID][2], 1.0f));
             o.pos = mul(UNITY_MATRIX_VP, wPos);
 
-            //o.uv = v.uv;
+            o.uv = v.texcoord;
             o.color = float4(1.0f, 0.0f, 0.0f, 1.0f);//_MainTex.Sample(samplerMaintTex);
             
             return o;
         }
 
         float4 frag(v2f i) : SV_Target{
-            return i.color;
+            fixed4 texureColour = tex2D(_MainTex, i.uv);
+
+
+            return texureColour;
         }        
         ENDCG
         }

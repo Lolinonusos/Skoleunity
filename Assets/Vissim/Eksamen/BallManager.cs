@@ -11,6 +11,8 @@ public class BallManager : MonoBehaviour
     private List<RollingBall> balls = new List<RollingBall>();
 
     [SerializeField] [Range(0.5f, 50.0f)] private float size = 10;
+
+    private float timer = 0;
     
     void Start()
     {
@@ -26,6 +28,18 @@ public class BallManager : MonoBehaviour
                 balls[i].BallCollision(balls[j]);
             }
         }
+
+        if (Input.GetKey(KeyCode.Q)) {
+            timer += Time.deltaTime;
+            
+        }
+        
+        
+        if (timer > 1) {
+            SpawnBall();
+            timer = 0.0f;
+        }
+        
     }
 
     void SpawnBall()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,6 +42,7 @@ public class RollingBall : MonoBehaviour {
     List<Vector2> controlpoints;
     List<float> knotVector;
 
+    [NonSerialized]public bool isOutofBounds = false; 
 
     void Awake() {
         previousPosition = transform.position;
@@ -68,6 +70,11 @@ public class RollingBall : MonoBehaviour {
     
     void FixedUpdate() {
         //TIME += Time.deltaTime;
+        if (isOutofBounds) {
+            manager.RemoveBall(this);
+            Destroy(this);
+        }
+        
         Vector3 force = new Vector3();
 
         // if (startBspline && TIME >= splineTimeInterval && controlPointsPlaced <= intervals) {
@@ -114,7 +121,7 @@ public class RollingBall : MonoBehaviour {
         // Using (k = C + ((S - C) . n) * n when |(S - C) . n| <= r) to calculate the collision point
         Vector3 pos = transform.position; // C
         //Vector3 baryc = triangleSurface.baryc(new Vector2(pos.x, pos.z)); // S
-        Vector3 hitPos = triangleSurface.SurfaceCollision(pos); // S
+        Vector3 hitPos = triangleSurface.SurfaceCollision(pos, this); // S
         Vector3 normalVec = triangleSurface.normalVector; // n
 
         Vector3 distVec = pos - hitPos;
@@ -151,8 +158,8 @@ public class RollingBall : MonoBehaviour {
         thisPos -= overlap * (thisPos - otherPos) / 2;
         otherPos -= overlap * (otherPos - thisPos) / 2;
 
-        //transform.position = thisPos;
-        //otherBall.transform.position = otherPos;
+        transform.position = thisPos;
+        otherBall.transform.position = otherPos;
         
         // https://github.com/NesquikPlus/opengl_collision/blob/master/Game.cpp
         // Normal
