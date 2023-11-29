@@ -33,8 +33,12 @@ public class BallManager : MonoBehaviour
         GameObject ballGameObject = Instantiate(ballPrefab, GetRandomBallPosition(), Quaternion.identity);
         ballGameObject.GetComponent<RollingBall>().triangleSurface = triangleSurface;
         balls.Add(ballGameObject.GetComponent<RollingBall>());
+        balls[balls.Count - 1].SetManager(this);
     }
-    
+
+    public void RemoveBall(RollingBall ballToRemove) {
+        balls.Remove(ballToRemove);
+    }
     
     Vector3 GetRandomBallPosition() {
         float random = Random.Range(-size, size);

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class RollingBall : MonoBehaviour {
 
+    [SerializeField] private BallManager manager;
     // For physics allowing the ball to collide with a triangle surface
     [SerializeField] public TriangleSurfaceV2 triangleSurface;
     //[SerializeField][Range(0.0f, 10.0f)] private float bouncyness = 1.0f;
@@ -46,8 +47,23 @@ public class RollingBall : MonoBehaviour {
         newPosition = transform.position;
         TIME = 0.0f;
         transform.localScale = new Vector3(radius * 2.00f, radius * 2.00f, radius * 2.00f);
-        
+
         //VELOCITY = Vector3.ProjectOnPlane(VELOCITY, planeNormal);
+    }
+
+    void Start() {
+        if (triangleSurface == null) {
+            Debug.Log("Surface reference missing");
+            if (manager != null) {
+                manager.RemoveBall(this);
+            }
+
+            Destroy(this);
+        }
+    }
+
+    public void SetManager(BallManager newManager) {
+        manager = newManager;
     }
     
     void FixedUpdate() {
@@ -120,7 +136,7 @@ public class RollingBall : MonoBehaviour {
         Vector3 thisPos = transform.position;
         Vector3 otherPos = otherBall.transform.position;
         
-        
+        // Distance between the balls
         float distance = Vector3.Distance(thisPos, otherPos);
         
         // Check if balls are overlapping, exit if they do not
@@ -132,30 +148,34 @@ public class RollingBall : MonoBehaviour {
 
         // Displace balls
         thisPos -= overlap * (thisPos - otherPos) / distance;
-        otherPos += overlap * (otherPos - thisPos) / distance;
+        otherPos -= overlap * (otherPos - thisPos) / distance;
 
         transform.position = thisPos;
         otherBall.transform.position = otherPos;
         
-        Vector3 direction = transform.position - otherBall.transform.position;
+        // Normal
+        Vector3 collisionNormal = (otherPos - thisPos);
+        collisionNormal = Vector3.Normalize(collisionNormal);
+        
+        Vector3 proj1 = Vector3.Project(newVelocity, collisionNormal);
+        Vector3 proj2 = Vector3.Project(otherBall.newVelocity, collisionNormal);
 
-        Vector3 normal = direction / distance;
+        float v1n = -1.0f * Vector3.Magnitude(proj1);
+        float v2n = Vector3.Magnitude(proj1);
+        
+        float v1n2 = (v1n * (mass - otherBall.mass) + 2 * (otherBall.mass) * v2n) / (mass + otherBall.mass);
+        float v2n2 = (v2n * (otherBall.mass - mass) + 2 * (mass) * v1n) / (mass + otherBall.mass);
 
-        Vector3 minTransDist;
-        if (true)
-        {
-            minTransDist = direction;
-        }
-        
-        Vector3 vel = newVelocity - otherBall.newVelocity;
-        
+        // Vector3 direction1 = Vector3.Normalize(-(currentVelocity - proj1));
+        // Vector3 direction2 = Vector3.Normalize(-(otherBall.currentVelocity - proj2));
 
-        float impactSpeed = Vector3.Dot(vel, minTransDist);
-        
-        Vector3 impulse = minTransDist * impactSpeed;
-        
-        newVelocity = newVelocity + impulse;
-        otherBall.newVelocity = otherBall.newVelocity - impulse;
+        newVelocity = (newVelocity - proj1) + (v1n2 * collisionNormal);
+        otherBall.newVelocity = (newVelocity - proj2) + (v2n2 * collisionNormal);
+
+
+
+        //newVelocity = newVelocity + impulse;
+        //otherBall.newVelocity = otherBall.newVelocity - impulse;
     }
     
     // void SetSplineControlPoint() {
