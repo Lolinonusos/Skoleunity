@@ -14,12 +14,13 @@ public class RollingBall : MonoBehaviour {
     public Vector3 currentVelocity = new();
     public Vector3 newVelocity = Vector3.zero;
     Vector3 acceleration = Vector3.zero;
+    private Vector3 hitPos = new Vector3();
     float mass = 2.0f;
     float newton;
     private float barycY;
     Vector3 previousPosition;
     Vector3 newPosition;
-
+    public Vector3 surfaceNormal;
     private int triangle = -1;
 
     Vector3 torque; // Position (cross) Force
@@ -69,29 +70,20 @@ public class RollingBall : MonoBehaviour {
     }
     
     void FixedUpdate() {
-        //TIME += Time.deltaTime;
+        
         if (isOutofBounds) {
             manager.RemoveBall(this);
             Destroy(this);
         }
         
         Vector3 force = new Vector3();
-
-        // if (startBspline && TIME >= splineTimeInterval && controlPointsPlaced <= intervals) {
-        //     TIME = 0;
-        //     controlPointsPlaced += 1;
-        //     //controlpoints.Add(new Vector2(transform.position.x, transform.position.z));
-        //     //bSpline.
-        // }
         
         if (SurfaceCollision()) {
-            startBspline = true;
-            Vector3 surfaceNormal = triangleSurface.normalVector;
-            Vector3 normalForce = -Vector3.Dot(gravity, surfaceNormal) * surfaceNormal;
+            
+            Vector3 normalForce = -Vector3.Project(gravity, surfaceNormal);
             force = gravity + normalForce;
             acceleration = force;
             currentVelocity = Vector3.ProjectOnPlane(currentVelocity, surfaceNormal);
-            //print("Collision");
             
             // Rolling over trangle edge
             if (triangleSurface.enteredTriangle) {
@@ -114,24 +106,20 @@ public class RollingBall : MonoBehaviour {
         newPosition = transform.position + newVelocity * Time.fixedDeltaTime;
    
         transform.position = newPosition;
-        torque = Vector3.Cross(transform.position, force);
     }
 
     private bool SurfaceCollision() {
-        // Using (k = C + ((S - C) . n) * n when |(S - C) . n| <= r) to calculate the collision point
+        // Get collisionpoint using formula (k = C + ((S - C) . n) * n
         Vector3 pos = transform.position; // C
-        //Vector3 baryc = triangleSurface.baryc(new Vector2(pos.x, pos.z)); // S
-        Vector3 hitPos = triangleSurface.SurfaceCollision(pos, this); // S
-        Vector3 normalVec = triangleSurface.normalVector; // n
-
-        Vector3 distVec = pos - hitPos;
-        float dist = distVec.magnitude;
-        //print("distvec: " + hitPos + "  ballposition: " + pos);
+        hitPos = triangleSurface.SurfaceCollision(pos, this); // S
+        // Normal n is stored in ball as surface normal
         
-        float dotProduct = Vector3.Dot(hitPos - pos, normalVec);
-        // (Mathf.Abs(dotProduct)
+        // (S - C) . n
+        float dotProduct = Vector3.Dot(hitPos - pos, surfaceNormal);
+        
+        // abs((S - C) . n)
         if ((Mathf.Abs(dotProduct)) <= radius) {
-            //print("true");
+            // k = C + abs((S - C) . n) * n
             return true;
         }
         //print("false");
@@ -139,7 +127,6 @@ public class RollingBall : MonoBehaviour {
     }
     
     public void BallCollision(RollingBall otherBall) {
-        //print("Ball Collisioncheck works");
         Vector3 thisPos = transform.position;
         Vector3 otherPos = otherBall.transform.position;
         
@@ -163,40 +150,20 @@ public class RollingBall : MonoBehaviour {
         
         // https://github.com/NesquikPlus/opengl_collision/blob/master/Game.cpp
         // Normal
-        Vector3 collisionNormal = (otherPos - thisPos);
+        Vector3 collisionNormal = (thisPos - otherPos);
         collisionNormal = Vector3.Normalize(collisionNormal);
         
-        Vector3 proj1 = Vector3.Project(newVelocity, collisionNormal);
-        Vector3 proj2 = Vector3.Project(otherBall.newVelocity, collisionNormal);
+        // Tangental vector
+        Vector3 proj1 = Vector3.Project(currentVelocity, collisionNormal);
+        Vector3 proj2 = Vector3.Project(otherBall.currentVelocity, collisionNormal);
 
         float v1n = -1.0f * Vector3.Magnitude(proj1);
-        float v2n = Vector3.Magnitude(proj1);
+        float v2n = Vector3.Magnitude(proj2);
         
-        float v1n2 = (v1n * (mass - otherBall.mass) + 2 * (otherBall.mass) * v2n) / (mass + otherBall.mass);
-        float v2n2 = (v2n * (otherBall.mass - mass) + 2 * (mass) * v1n) / (mass + otherBall.mass);
+        float v1n2 = (v1n * (mass - otherBall.mass) + 2 * otherBall.mass * v2n) / (mass + otherBall.mass);
+        float v2n2 = (v2n * (otherBall.mass - mass) + 2 * mass * v1n) / (mass + otherBall.mass);
 
-        // Vector3 direction1 = Vector3.Normalize(-(currentVelocity - proj1));
-        // Vector3 direction2 = Vector3.Normalize(-(otherBall.currentVelocity - proj2));
-
-        //newVelocity = (newVelocity - proj1) + (v1n2 * collisionNormal);
-        //otherBall.newVelocity = (newVelocity - proj2) + (v2n2 * collisionNormal);
-
-        newVelocity = (newVelocity - 2 * collisionNormal);
-        otherBall.newVelocity = (newVelocity - 2 * collisionNormal);
-
-        //newVelocity = newVelocity + impulse;
-        //otherBall.newVelocity = otherBall.newVelocity - impulse;
+        currentVelocity = (currentVelocity - proj1) + (v1n2 * collisionNormal);
+        otherBall.currentVelocity = (currentVelocity - proj2) + (v2n2 * collisionNormal);
     }
-    
-    // void SetSplineControlPoint() {
-    //     bSplinePoints.Add(transform.position);
-    // }
-    //
-    // void DrawSpline()
-    // {
-    //     for (float x = 0; x < bSplinePoints.Count; x += 0.005f) {
-    //         
-    //         
-    //     }
-    // }
 }

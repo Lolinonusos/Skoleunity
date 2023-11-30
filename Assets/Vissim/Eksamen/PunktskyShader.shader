@@ -1,4 +1,4 @@
-Shader "Custom/Goblin"
+Shader "Custom/PunktskyShader"
 {
     Properties
     {

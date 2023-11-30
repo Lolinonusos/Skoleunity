@@ -35,7 +35,7 @@ public class BallManager : MonoBehaviour
         }
         
         
-        if (timer > 1) {
+        if (timer > 0.5) {
             SpawnBall();
             timer = 0.0f;
         }

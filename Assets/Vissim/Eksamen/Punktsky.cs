@@ -16,6 +16,7 @@ public class Punktsky : MonoBehaviour
     // Punkt koordinater
     Vector3[] points; 
     
+    // Variabler brukt til Indirect GPU Instancing
     ComputeBuffer argsBuffer;
     uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
     private int subMeshIndex = 0;
@@ -24,7 +25,7 @@ public class Punktsky : MonoBehaviour
     GraphicsBuffer commandBuffer;
     GraphicsBuffer.IndirectDrawIndexedArgs[] commandData;
     const int commandCount = 1;
-    
+
     Vector3 scale = new Vector3(1.0f, 1.0f, 1.0f);
     
     private float xAvg;
@@ -127,8 +128,6 @@ public class Punktsky : MonoBehaviour
         commandData = new GraphicsBuffer.IndirectDrawIndexedArgs[commandCount];
         positionBuffer = new ComputeBuffer(points.Length, 4 * 3);
         positionBuffer.SetData(points);
-        // argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
-        //UpdateBuffers();
     }
     
     void Update() {
@@ -153,30 +152,4 @@ public class Punktsky : MonoBehaviour
         commandBuffer?.Release();
         commandBuffer = null;
     }
-
-    // void UpdateBuffers() {
-    //     subMeshIndex = Mathf.Clamp(subMeshIndex, 0, mesh.subMeshCount - 1);
-    //
-    //     if (positionBuffer != null) { positionBuffer.Release(); }
-    //     
-    //     positionBuffer = new ComputeBuffer(points.Length, 4 * 3);
-    //
-    //     Vector4[] positions = new Vector4[points.Length];
-    //
-    //     for (int i = 0; i < points.Length; i++) {
-    //         //print("Position: " + vertices[i]);
-    //         positions[i] = new Vector4(points[i].x, points[i].y, points[i].z);
-    //         print("Positions as Vector4: " + positions[i]);
-    //         //print(i);
-    //     }
-    //
-    //     positionBuffer.SetData(points);
-    //     material.SetBuffer("positionBuffer", positionBuffer);
-    //
-    //     args[0] = (uint)mesh.GetIndexCount(subMeshIndex);
-    //     args[1] = (uint)points.Length;
-    //     args[2] = (uint)mesh.GetIndexStart(subMeshIndex);
-    //     args[3] = (uint)mesh.GetBaseVertex(subMeshIndex);
-    //     argsBuffer.SetData(args);
-    // }
 }

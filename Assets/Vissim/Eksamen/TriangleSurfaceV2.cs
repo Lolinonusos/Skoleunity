@@ -55,7 +55,6 @@ public class TriangleSurfaceV2 : MonoBehaviour
 
     [SerializeField][Range(1, 100)] private int skip;
     private float min, max;
-    private float depth, height;
     private float size;
     private float stepLength;
     
@@ -176,8 +175,6 @@ public class TriangleSurfaceV2 : MonoBehaviour
         if (xMax < zMax) {
                 max = zMax * 0.5f;
         }
-
-        height = yMax;
         
         min = - max;
         size = max - min;
@@ -371,24 +368,18 @@ public class TriangleSurfaceV2 : MonoBehaviour
     // Anders Åsbø
     public Vector3 SurfaceCollision(Vector3 objectPos, RollingBall ball) {
 
-        //int quadsInRow = Mathf.FloorToInt(stepLength / resolution);
-        //print("Size: "+ stepLength);
-        //print("QuadsinRow: "+ quadsInRow);
-
+        
+        // Because of the regularity of the triangle surface we can use the steplength
+        // to find i and j which are then used to calculate approximately which triangle the ball is on
         int i = Mathf.FloorToInt((objectPos.x - min) / stepLength);
         int j = Mathf.FloorToInt((objectPos.z - min) / stepLength);
-        //print("i: "+ i);
-        //print("j: "+ j);
-        
         
         int triangleIndex = 2 * (j + i * resolution);
 
         // Check to see if index out of bounds, set to 0 if it is 
         triangleIndex = triangleIndex < 0 ? 0 : triangleIndex;
         triangleIndex = triangleIndex > triangles.Count - 1 ? 0 : triangleIndex;
-        //print("TriangleIndex: "+ triangleIndex);
-        
-        //print("Triangles: "+ triangles.Count);
+
         Triangle currentTri = triangles[triangleIndex];
 
         while (true)
@@ -399,26 +390,24 @@ public class TriangleSurfaceV2 : MonoBehaviour
            
             Vector3 uvw = CalcBarycentricCoordinate(a, b, c, objectPos);
             
+            // Ball is in the correct triangle
             if (uvw is {x: >= 0, y: >= 0, z: >= 0}) {
-                normalVector = CalculateNormalVector(a, b, c);
+                ball.surfaceNormal = currentTri.normal;
                 Vector3 hitPos = uvw.x * a + uvw.y * b + uvw.z * c;
                 
-                // if (previousTriangle != currentTri.ID) {
-                //     //print("Entered triangle number: " + currentTriangle);
-                //     previousTriangle = currentTri.ID;
-                //     previousNormalVector = normalVector;
-                //     normalVector = CalculateNormalVector(a, b, c);
-                //     // normalVector = currentTri.normal;
-                //     enteredTriangle = true;
-                // }
+                // Ball has moved into a new triangle
+                if (previousTriangle != currentTri.ID) { ;
+                     enteredTriangle = true;
+                }
                 Vector3 difference = hitPos - objectPos;
-                hitPos = objectPos + Vector3.Dot(difference, normalVector) * normalVector;
+                hitPos = objectPos + Vector3.Dot(difference, ball.surfaceNormal) * ball.surfaceNormal;
                 
-                //print("Suksess " + currentTri.ID);
                 return hitPos;
             }
             
             // We are not inside the current triangle
+            // Use the most negative barycentric coordinate
+            // to decide which neighbour to search next
             int opposingIndex;
             if (uvw.x <= uvw.y && uvw.x <= uvw.z) {
                 opposingIndex = 0;
@@ -430,50 +419,37 @@ public class TriangleSurfaceV2 : MonoBehaviour
                 opposingIndex = 2;
             }
 
+            // Continue from start of the loop with a new triangle
             if (currentTri.neighbours[opposingIndex] >= 0) {
                 currentTri = triangles[currentTri.neighbours[opposingIndex]];
-                //Debug.Log("Spam? " + currentTri.ID);
-                continue;
+               continue;
             }
             
-            // No neighbour triangle was found
+            // Out of bounds
             Debug.Log("Out of bounds");
             ball.isOutofBounds = true;
             return Vector3.zero;
-        }            
-        // Debug.Log("Wrong out of bounds");
-        // return Vector3.zero;
+        }
     }   
     
     public Vector3 CalcBarycentricCoordinate(Vector3 a, Vector3 b, Vector3 c, Vector3 x) {
          Vector3 uvw = Vector3.zero;
         
         // Gammel utregning jeg brukte i 3D programmering
-        // Vector2 v0 = new Vector2(b.x, b.z) - new Vector2(a.x, a.z);
-        // Vector2 v1 = new Vector2(c.x, c.z) - new Vector2(a.x, a.z);
-        // Vector2 v2 = new Vector2(x.x, x.z) - new Vector2(a.x, a.z);
-        //
-        // float d00 = Vector2.Dot(v0, v0);
-        // float d01 = Vector2.Dot(v0, v1);
-        // float d11 = Vector2.Dot(v1, v1);
-        // float d20 = Vector2.Dot(v2, v0);
-        // float d21 = Vector2.Dot(v2, v1);
-        // float denom = 1.0f / (d00 * d11 - d01 * d01);
-        //
-        //
-        // uvw.y = (d11 * d20 - d01 * d21) * denom;
-        // uvw.z = (d00 * d21 - d01 * d20) * denom;
-        // uvw.x = 1.0f - uvw.y - uvw.z;
-        //
-        // return uvw;
+        Vector2 v0 = new Vector2(b.x, b.z) - new Vector2(a.x, a.z);
+        Vector2 v1 = new Vector2(c.x, c.z) - new Vector2(a.x, a.z);
+        Vector2 v2 = new Vector2(x.x, x.z) - new Vector2(a.x, a.z);
         
-        // Ny utregnings måte jeg fikk fra Anders Åsbø
-        Vector3 ab = b - a;
-        Vector3 ac = c - a;
-        Vector3 ax = x - a; 
-        float signedArea = ab.x * ac.z - ac.x * ab.z;
-        uvw.y = (ax.x * ac.z - ac.x * ax.z) / signedArea;
-        uvw.z = (ab.x * ax.z - ax.x * ab.z) / signedArea;
+        float d00 = Vector2.Dot(v0, v0);
+        float d01 = Vector2.Dot(v0, v1);
+        float d11 = Vector2.Dot(v1, v1);
+        float d20 = Vector2.Dot(v2, v0);
+        float d21 = Vector2.Dot(v2, v1);
+        float denom = 1.0f / (d00 * d11 - d01 * d01);
+        
+        
+        uvw.y = (d11 * d20 - d01 * d21) * denom;
+        uvw.z = (d00 * d21 - d01 * d20) * denom;
         uvw.x = 1.0f - uvw.y - uvw.z;
         
         return uvw;
