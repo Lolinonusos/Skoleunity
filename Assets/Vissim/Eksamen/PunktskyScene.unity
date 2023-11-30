@@ -123,84 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &703220675
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 333285717735119244, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3790033758051078629, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_Name
-      value: Car
-      objectReference: {fileID: 0}
-    - target: {fileID: 3790033758051078629, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9104069793172606211, guid: eea6a1d530fefd94ca33ae2c115c29b5,
-        type: 3}
-      propertyPath: m_CollisionDetection
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: eea6a1d530fefd94ca33ae2c115c29b5, type: 3}
 --- !u!1 &789221471
 GameObject:
   m_ObjectHideFlags: 0
@@ -213,6 +135,7 @@ GameObject:
   - component: {fileID: 789221473}
   - component: {fileID: 789221472}
   - component: {fileID: 789221475}
+  - component: {fileID: 789221476}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -338,6 +261,23 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &789221476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 789221471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4e6536e8a784654abb61fa8bf2ecc5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  acceleration: 50
+  accSprintMultiplier: 4
+  lookSensitivity: 1
+  dampingCoefficient: 5
+  focusOnEnable: 1
 --- !u!1 &931419930
 GameObject:
   m_ObjectHideFlags: 0
@@ -532,7 +472,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1836267925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -650,7 +590,7 @@ PrefabInstance:
     - target: {fileID: 3217735872991287805, guid: 6f6a9792b5be30e4abceb4e65174233c,
         type: 3}
       propertyPath: resolution
-      value: 18
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3217735872991287805, guid: 6f6a9792b5be30e4abceb4e65174233c,
         type: 3}
@@ -686,5 +626,4 @@ SceneRoots:
   - {fileID: 931419932}
   - {fileID: 1836267926}
   - {fileID: 6197598296985130336}
-  - {fileID: 703220675}
   - {fileID: 1812521144}

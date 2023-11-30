@@ -108,6 +108,7 @@ public class RollingBall : MonoBehaviour {
         transform.position = newPosition;
     }
 
+    // Fikk noen tips fra Andreas til denne
     private bool SurfaceCollision() {
         // Get collisionpoint using formula (k = C + ((S - C) . n) * n
         Vector3 pos = transform.position; // C
@@ -163,6 +164,7 @@ public class RollingBall : MonoBehaviour {
         float v1n2 = (v1n * (mass - otherBall.mass) + 2 * otherBall.mass * v2n) / (mass + otherBall.mass);
         float v2n2 = (v2n * (otherBall.mass - mass) + 2 * mass * v1n) / (mass + otherBall.mass);
 
+        // Apply new velocities
         currentVelocity = (currentVelocity - proj1) + (v1n2 * collisionNormal);
         otherBall.currentVelocity = (currentVelocity - proj2) + (v2n2 * collisionNormal);
     }
